@@ -1,0 +1,19 @@
+{
+  "name": "virtualcurrencygame",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "compression": "~1.7.2",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "express": "~4.16.0",
+    "express-session": "~1.15.6",
+    "morgan": "~1.9.0",
+    "method-override": "~2.3.10"
+  }
+}
