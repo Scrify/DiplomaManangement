@@ -16,6 +16,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Ionicons -->
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 
+    <link rel="stylesheet" href="../../bower_components/morris.js/morris.css">
+
     <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
@@ -79,7 +81,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right-container">
-                                    <a href="#" class="btn btn-default btn-flat">退出</a>
+                                    <a href="/logout" class="btn btn-default btn-flat">退出</a>
                                 </div>
                             </li>
                         </ul>
@@ -145,21 +147,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </section>
         <section class="content">
             <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
+                <div class="col-md-4">
+                    <div class="box box-info">
                         <div class="box-header">
                             <h3 id="bid" class="box-title"></h3>
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
                             <div class="table-responsive">
-                                <table class="table no-margin">
+                                <table class="table no-margin" style="height: 300px">
                                     <thead>
                                     <tr>
                                         <th>编号</th>
                                         <th>交易时间</th>
 
                                         <th>价格</th>
+                                        <th>所属</th>
                                     </tr>
                                     </thead>
                                     <tbody id="tb">
@@ -171,6 +174,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </div>
                     <!-- /.box -->
                     <!-- /.box -->
+                </div>
+                <div class="col-md-8">
+                    <!-- LINE CHART -->
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">货币历史价格变化曲线</h3>
+
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-minus">
+
+                                    </i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body chart-responsive">
+                            <div class="chart" id="line-chart" style="height: 300px;"></div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                    <!-- /.box -->
+
                 </div>
                 <!-- /.col -->
             </div>
@@ -203,12 +229,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- SlimScroll -->
 <script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+
+<script src="bower_components/raphael/raphael.min.js"></script>
+<script src="bower_components/morris.js/morris.min.js"></script>
 <!-- FastClick -->
 <script src="bower_components/fastclick/lib/fastclick.js"></script>
+
+<!--<script src="bower_components/chart.js/Chart.js"></script>-->
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
+<script>
+
+
+    $(function () {
+        "use strict";
+        // LINE CHART
+
+    });
+
+
+
+</script>
 <script>
 
     $(function () {
@@ -229,26 +272,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
             url:'/api',
             type:'get',
             data:{
-                cmd:'query("history","'+bid+'")'
+                cmd:'mykeyhistory("'+bid+'")'
             },
             success:function(data){
-                var data = eval('(' + data + ')');
-                var data = eval('(' + data + ')');
-
-                var arr1 = [];
-                var html1 = '';
+                data = eval('(' + data + ')');
+                let html1 = '';
                 for (let i=0;i<data.length;i++) {
                     var a = i + 1;
-                    //属于我
-
                     html1 += '<tr><td id="tds">' + a +
 
                         '<td id="tds">' + data[i].timestamp+ '</td>' +
-                        '<td id="tds">' + data[i].value + '</td>' +
-
-                        '</tr>'
+                        '<td id="tds">' + data[i].value + '</td>';
+                    if(data[i].isMine===true){
+                        html1 += '<td><i class="fa fa-fw fa-balance-scale"></i></td>';
+                    }
+                    html1 += '</tr>';
                 }
                 $('#tb').append(html1);
+
+                var line = new Morris.Line({
+                    element: 'line-chart',
+                    resize: true,
+                    data: data,
+                    xkey: 'timestamp',
+                    ykeys: ['value'],
+                    labels: ['value'],
+                    lineColors: ['#3c8dbc'],
+                    hideHover: 'auto'
+                });
+
 
             },
             error:function(e){

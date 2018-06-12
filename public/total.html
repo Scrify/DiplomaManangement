@@ -79,7 +79,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right-container">
-                                    <a href="#" class="btn btn-default btn-flat">退出</a>
+                                    <a href="/logout" class="btn btn-default btn-flat">退出</a>
                                 </div>
                             </li>
                         </ul>
@@ -146,43 +146,55 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <section class="content">
             <div class="row">
-                <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="col-md-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-green"><i class="fa fa-cny"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">投入</span>
-                            <span class="info-box-number" id="total_cost">410</span>
+                            <span class="info-box-text">投入总价</span>
+                            <span class="info-box-number" id="total_cost"></span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
 
-                <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="col-md-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-blue"><i class="fa fa-cny"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">市值</span>
-                            <span class="info-box-number" id="total_value">410</span>
+                            <span class="info-box-text">持有虚币总市值</span>
+                            <span class="info-box-number" id="total_value"></span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
 
-                <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-blue"><i class="fa fa-cny"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">收入总价</span>
+                            <span class="info-box-number" id="total_income"></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+
+                <div class="col-md-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-orange"><i class="fa fa-cny"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">利润</span>
-                            <span class="info-box-number" id="total_income">410</span>
+                            <span class="info-box-text">净利润</span>
+                            <span class="info-box-number" id="total_profit"></span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
                 </div>
 
-                <div class="col-xs-12">
+                <div class="col-md-6 col-xs-12">
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">持有虚拟货币</h3>
@@ -205,7 +217,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12">
+                <div class="col-md-6 col-xs-12">
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">未持有虚拟货币</h3>
@@ -286,13 +298,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
         }
     });
     $.ajax({
+        url: '/getIncomeAndProfit',
+        type: 'get',
+        data: {
+        },
+        success: function (data) {
+            data = eval('('+data+')');
+            // let total_cost = $('#total_cost').text();
+            $('#total_profit').text(data.profit);
+            $('#total_income').text(data.income);
+        },
+        error: function (e) {
+            alert("server error!");
+        }
+    });
+    $.ajax({
+        url: '/getLastValue',
+        type: 'get',
+        data: {
+        },
+        success: function (data) {
+            // alert(data['count']);
+            data = eval('('+data+')');
+            // data.count;
+            // $('#last_tx_value').text('当前单币市值：'+data.last_tx_value);
+            $('#total_value').text(data.count*data.last_tx_value);
+
+        },
+        error: function (e) {
+            alert("server error!");
+        }
+    });
+    $.ajax({
         url: '/api',
         type: 'get',
         data: {
             cmd: 'mykeys("bid01","bid99")'
         },
         success: function (data) {
-            var data = eval('(' + data + ')');
+            data = eval('(' + data + ')');
             var html1 = '';
             // isnotMine
             var html2 = '';
@@ -300,14 +344,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
             var arr2 = [];
             for (let i in data) {
                 data[i].bid = i;
-                if (data[i].isMine == true) {
+                if (data[i].isMine === true) {
                     arr1.push(data[i]); //属性
                 }
                 //arr.push(obj[i]); //值
             }
             for (let i in data) {
                 data[i].bid = i;
-                if (data[i].isMine == false) {
+                if (data[i].isMine === false) {
                     arr2.push(data[i]); //属性
                 }
             }
@@ -323,8 +367,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     '<td id="tds">' + bid + '</td>' +
                     '<td id="tds">' + item['value'] + '</td>' +
                     '<td id="tds">' + item['timestamp'] + '</td>' +
-                    '<td>' + '<a href=' + 'view_details?bid=' + bid + '>详情</a>' +
-
+                    '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
+                    '<button type="button" class="btn btn-info">详  情</button>' +
+                    '</a>' +
                     '</td></tr>'
 
 
@@ -338,8 +383,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     '<td id="tds">' + bid + '</td>' +
                     '<td id="tds">' + item['value'] + '</td>' +
                     '<td id="tds">' + item['timestamp'] + '</td>' +
-                    '<td>' + '<a href=' + 'view_details?bid=' + bid + '><span>详情</span></a>' +
-                    '<a href=' + 'buy?bid=' + bid + '><span>购买</span></a>' + '</td></tr>'
+                    '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
+                    '<button type="button" class="btn btn-info pull-eft">详  情</button>' +
+                    '</a>' +
+                    '<a href=' + 'buy?bid=' + bid + '>' +
+                    '<button type="button" class="btn btn-success pull-right">购  买</button>'+
+                    '</a>' + '</td></tr>'
 
             });
             // console.log(arr1);

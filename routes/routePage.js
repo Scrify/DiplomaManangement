@@ -1,5 +1,4 @@
-let login = require('../controllers/login'),
-    renderPage = require('../controllers/renderPage');
+let renderPage = require('../controllers/renderPage');
 
 module.exports = function (app) {
 

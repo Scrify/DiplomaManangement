@@ -7,6 +7,8 @@ var morgan = require('morgan'),
     methodOverride = require('method-override'),
     session = require('express-session');
 
+global.fc_list = {};
+
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // var loginRouter = require('./routes/login');
@@ -42,9 +44,9 @@ app.engine('.html', require('ejs').__express);
 app.set('views', './public');
 app.set('view engine', 'html');
 
-require('./routes/login.js')(app);
+require('./routes/routeApi.js')(app);
 require('./routes/routePage.js')(app);
-require('./routes/api.js')(app);
+// require('./routes/api.js')(app);
 // app.use('/users', usersRouter);
 
 module.exports = app;
