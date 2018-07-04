@@ -62,12 +62,12 @@ exports.getLastValue = function (req, res, next) {
             let last_tx = await eval('fc.mytxlast()');
             console.log(last_tx);
             last_tx['writes'].forEach(function (write) {
-                last_tx_value_max = Number(write['value'])>last_tx_value_max?Number(write['value']):last_tx_value_max;
+                last_tx_value_max = Number(write['value']) > last_tx_value_max ? Number(write['value']) : last_tx_value_max;
                 console.log(last_tx_value_max);
             });
 
 
-            res.write(JSON.stringify({'count':count,'last_tx_value':last_tx_value_max}));
+            res.write(JSON.stringify({ 'count': count, 'last_tx_value': last_tx_value_max }));
 
         } catch (err) {
             console.error(err);
@@ -121,7 +121,7 @@ exports.getIncomeAndProfit = function (req, res, next) {
                     }
                 }
             }
-            res.write(JSON.stringify({'income':income,'profit':profit}));
+            res.write(JSON.stringify({ 'income': income, 'profit': profit }));
 
         } catch (err) {
             console.error(err);
