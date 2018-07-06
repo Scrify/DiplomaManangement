@@ -77,8 +77,9 @@ exports.getLastValue = function (req, res, next) {
                 console.log(last_tx_value_max);
             });
             */
-            last_tx_value_max = last_tx.writeset[0].value
-
+            if (last_tx.writeset.length > 0) {
+                last_tx_value_max = last_tx.writeset[0].value
+            }
             res.write(JSON.stringify({
                 'count': count,
                 'last_tx_value': last_tx_value_max
@@ -113,10 +114,10 @@ exports.getIncomeAndProfit = function (req, res, next) {
             let mytx = await fc.mytx();
             let profit = 0; //利润
             let income = 0; //卖出总价
-            let buyin = 0;  //买入总价
+            let buyin = 0; //买入总价
             //for (let i = 0; i < mytx.length; i++) { //每个交易
             //    let tx = mytx[i];
-            for(let tx of mytx){    
+            for (let tx of mytx) {
                 //let now_txid = tx['tx_id'];
                 let now_txid = tx.tx_id;
                 //let writeset = tx['writeset'];
@@ -124,7 +125,7 @@ exports.getIncomeAndProfit = function (req, res, next) {
                 //console.log(now_txid);
                 //for (let j = 0; j < writeset.length; j++) { //每一个key=bidXX
                 //    let the_b = writeset[j];
-                for (let the_b of writeset){
+                for (let the_b of writeset) {
                     let the_tx_value = 0;
                     let now_value = 0;
                     //let the_history = await eval('fc.query("history","' + the_b['key'] + '")');
@@ -134,7 +135,7 @@ exports.getIncomeAndProfit = function (req, res, next) {
                     for (let k = 0; k < the_history.length; k++) {
                         //console.log(the_history[k]);
                         //if (the_history[k]['txid'] === now_txid) {
-                        if (the_history[k].txid === now_txid) {    
+                        if (the_history[k].txid === now_txid) {
                             count = k;
                         }
                     }
@@ -148,11 +149,11 @@ exports.getIncomeAndProfit = function (req, res, next) {
                         profit += (now_value - the_tx_value);
                     }
                 }
-            }//以上计算比较复杂，能否简化？
+            } //以上计算比较复杂，能否简化？
             res.write(JSON.stringify({
                 'income': income,
                 'profit': profit,
-                'buyin' : buyin
+                'buyin': buyin
             }));
 
         } catch (err) {
