@@ -67,27 +67,12 @@ exports.getLastValue = function (req, res, next) {
                 if (mykeys[key].isMine) count++;
             }
             let last_tx_value_max = 0;
-
             //let last_tx = await eval('fc.mytxlast()');
             let last_tx = await fc.mytxlast(); //调用该方法有风险，最后一次交易可能不是用户链码交易，可能是链码升级
             //console.log(last_tx);
             //下面可以简化，多个value是相同值，一笔交易购买多个虚币也是同一个价格，股票证券交易也如此
             /*
             last_tx['writeset'].forEach(write => {
-<<<<<<< HEAD
-=======
-=======
-            let last_tx = await eval('fc.mytxlast()');
-            console.log(last_tx);
-            last_tx['writes'].forEach(function (write) {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
->>>>>>> af9da5ddaa5ecd88df839000fbe42aac6aa08551
->>>>>>> Stashed changes
-=======
->>>>>>> af9da5ddaa5ecd88df839000fbe42aac6aa08551
->>>>>>> d80b51af7e34aef587b520550f86d634cb225429
                 last_tx_value_max = Number(write['value']) > last_tx_value_max ? Number(write['value']) : last_tx_value_max;
                 console.log(last_tx_value_max);
             });
@@ -98,11 +83,6 @@ exports.getLastValue = function (req, res, next) {
                 'count': count,
                 'last_tx_value': last_tx_value_max
             }));
-
-
-
-            res.write(JSON.stringify({ 'count': count, 'last_tx_value': last_tx_value_max }));
-
         } catch (err) {
             console.error(err);
             res.write('错误:' + err); //?
@@ -168,15 +148,13 @@ exports.getIncomeAndProfit = function (req, res, next) {
                         profit += (now_value - the_tx_value);
                     }
                 }
-
             }//以上计算比较复杂，能否简化？
             res.write(JSON.stringify({
                 'income': income,
                 'profit': profit,
                 'buyin' : buyin
             }));
-            res.write(JSON.stringify({ 'income': income, 'profit': profit }));
-            
+
         } catch (err) {
             console.error(err);
             res.write('错误:' + err); //?
