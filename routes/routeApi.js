@@ -9,6 +9,9 @@ module.exports = function (app) {
         // .get(total.render)
         .post(api.login);
 
+    app.route('/register')
+        .post(api.register);
+
     app.route('/logout')
         .get(api.logout);
 

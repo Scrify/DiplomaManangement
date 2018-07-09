@@ -27,13 +27,13 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="total.html"><b>Admin</b>LTE</a>
+        <!-- <a href="total.html"><b>Admin</b>LTE</a> -->
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">Sign in to start your session</p>
 
-        <form action="/login" method="post">
+        <form action="/register" method="post">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" name="username" placeholder="Username">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -48,15 +48,14 @@
 
                 </div>
                 <div class="col-xs-4">
-                    <button type="submit" id="login" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    <button type="submit" id="login" class="btn btn-primary btn-block btn-flat">注册</button>
                 </div>
                 <!-- /.col -->
             </div>
         </form>
         <!-- /.social-auth-links -->
 
-        <a href="#">I forgot my password</a><br>
-        <a href="/register" class="text-center">Register a new membership</a>
+
 
     </div>
     <!-- /.login-box-body -->
@@ -81,7 +80,7 @@
             increaseArea: '20%' /* optional */
         });
     });
-    
+
     // $('#login').click(function () {
     //     let username = $('#username').val();
     //     alert(username);

@@ -8,6 +8,9 @@ module.exports = function (app) {
     app.route('/')
         .get(renderPage.renderLogin);
 
+    app.route('/register')
+        .get(renderPage.renderRegister);
+
     app.route('/total')
         .get(renderPage.renderTotal);
 

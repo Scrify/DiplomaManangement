@@ -8,7 +8,7 @@
  * 下面设计没有第[2]步，原因是：
  * [1]采用页面内ajax调用来更新页面数据
  * [2]采用ejs带控制流的标签来书写页面元素比较复杂
- * 
+ *
  */
 //登录页面
 exports.renderLogin = function (req, res) {
@@ -19,6 +19,17 @@ exports.renderLogin = function (req, res) {
     });
     // next()
 };
+//注册页面
+exports.renderRegister = function (req, res) {
+
+    // console.log('1');
+    res.render('register', {
+        title: 'Register',
+        messages:null
+    });
+    // next()
+};
+
 //买入页面
 exports.renderBuy = function (req, res) {
     if (!req.session.username) {
@@ -27,8 +38,8 @@ exports.renderBuy = function (req, res) {
             messages: '请先登录'
         });
     } else {
-        let bid = req.query.bid; 
-        let value = req.query.value; 
+        let bid = req.query.bid;
+        let value = req.query.value;
         //console.log("bid=",bid,';value=',value);
         // console.log('total');
         res.render('buy', {

@@ -10,24 +10,70 @@
 var FConn = require('./fconn');
 
 exports.login = function (req, res, next) {
-    //post请求，从req.body中取出用户名和口令
     let username = req.body.username;
-    //应取出口令，然后由Mongo/users验证用户名与口令一致，需要添加编程
+    let password = req.body.password;
+    // // console.log(username);
+    // // next()
+    // (async () => {
+    //     try {
+    //         let fc = await FConn.FConnect(username);
+    //         if (fc === undefined) {
+    //             return res.render('login', {
+    //                 title: 'Login',
+    //                 messages: '未注册用户'
+    //             });
+    //         } else {
+    //             req.session.username = username;
+    //             fc_list[username] = fc;
+    //             return res.redirect('total');
+    //         }
+    //     } catch (err) {
+    //         // console.error(err);
+    //         if (err) {
+    //             return res.render('login', {
+    //                 title: 'Login',
+    //                 messages: err
+    //             });
+    //         }
+    //     }
+    // })();
     (async () => {
         try {
-            let fc = await FConn.FConnect(username);
-            if (fc === undefined) {
-                return res.render('login', {
-                    title: 'Login',
-                    messages: '未注册用户'
-                });
-            } else {
-                req.session.username = username;
-                fc_list[username] = fc;
-                return res.redirect('total');
-            }
+            mgclient = await MongoClient.connect(DBurl);
+            let col = mgclient.db().collection('users');
+            //查询mongodb并与输入的帐号密码进行匹配。
+            await col.find({ "_id": username }).toArray(function (err, docs) {
+                assert.equal(err, null);
+                console.log(docs);
+                let docsStr = docs.join();
+                if (docsStr == "") {
+                    //throw new Error('用户不存在');
+                    return res.render('login', {
+                        title: 'Login',
+                        messages: '未注册用户'
+                    });
+                } else{
+                    console.log(docs[0].salt);
+                    password = crypto.pbkdf2Sync(password, docs[0].salt, 10000, 64, 'md5').toString('base64');
+                    if (username == docs[0]._id &&  password == docs[0].pwd) {
+                        req.session.username = username;
+                        //fc_list[username] = fc;
+                        (async () => {
+                            let fc = await FConn.FConnect(username);
+                            fc_list[username] = fc;
+                            return res.redirect('total');
+                        })()
+                    } else {
+                        return res.render('login', {
+                            title: 'Login',
+                            messages: '密码错误'
+                        });
+                    }
+                }
+            })
+            mgclient.close();
         } catch (err) {
-            // console.error(err);
+            console.log('连接出错：', err);
             if (err) {
                 return res.render('login', {
                     title: 'Login',
@@ -35,7 +81,7 @@ exports.login = function (req, res, next) {
                 });
             }
         }
-    })();
+    })()
 };
 
 exports.logout = function (req, res, next) {
@@ -47,6 +93,47 @@ exports.logout = function (req, res, next) {
         messages: '已退出!'
     });
 };
+
+exports.register = function (req, res, next) {
+    let username = req.body.username;
+    let password = req.body.password;
+
+    var register = require('../../fabcar/registerUser');
+    var args = process.argv.splice(2);
+    var file = 'crtuser.json';
+    // var username = args[1];
+    (async () => {
+        try {
+            let cert = await register.registerUser(file, username); //cert
+            // console.log(cert);
+            let salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');  //Buffer
+
+
+            //@TODO
+            // 把salt=>string
+
+            //需要从salt是个string
+            password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
+
+            let write = { _id: username, salt:salt ,pwd: password, ca: cert.toString(), isValid: true };
+
+            const MongoClient = require('mongodb').MongoClient; //mongo
+            let client = await MongoClient.connect('mongodb://localhost:27017/myproject');
+            let col = client.db().collection('users');
+            let r = await col.insertOne(write);
+            const assert = require('assert');
+            assert.equal(1, r.insertedCount);
+            client.close();
+
+            return res.render('login', {
+                title: 'Login',
+                messages: '注册成功'
+            });
+        } catch (err) {
+            console.log('注册出错:', err);
+        }
+    })()
+}
 //计算持有虚币个数，最后交易价格，传给前端用于计算当前市值
 exports.getLastValue = function (req, res, next) {
     var username = req.session.username;
