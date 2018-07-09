@@ -8,6 +8,12 @@
  * 注意，可利用session保存一些区块数据，减少API调用，以提高性能
  */
 var FConn = require('./fconn');
+var crypto = require('crypto');
+
+var MongoClient = require("mongodb").MongoClient;
+var DBurl = 'mongodb://localhost:27017/myproject';
+const assert = require('assert');
+var mgclient = null;
 
 exports.login = function (req, res, next) {
     let username = req.body.username;
