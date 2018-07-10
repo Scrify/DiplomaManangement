@@ -13,8 +13,8 @@ var http = require('http');
  */
 
 var port = normalizePort(process.env.PORT || '3001');
-var ip = '127.0.0.1'; //localhost只能本机访问 
-//var ip = '192.168.1.160'; //与本机ip一致，其它机器可访问
+var ip = '127.0.0.1'; //localhost只能本机访问
+// var ip = '192.168.1.159'; //与本机ip一致，其它机器可访问
 app.set('port', port);
 
 /**

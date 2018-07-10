@@ -5,16 +5,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" http-equiv="refresh" content="5">
     <meta http-equiv="X-UA-Compatible" content="IE=chrome">
     <title><%= title %></title>
     <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" >
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="../../bower_components/morris.js/morris.css">
 
     <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <!-- Theme style -->
@@ -111,7 +112,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
-                <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
+                <li class="active"><a href="tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
                 <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
@@ -193,7 +194,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </div>
                     <!-- /.info-box -->
                 </div>
+                <div class="col-md-12 col-xs-12">
+                    <!-- LINE CHART -->
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">交易行情变化</h3>
+                        </div>
+                        <div class="box-body chart-responsive">
+                            <div class="chart" id="line-chart" style="height: 300px;"></div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                    <!-- /.box -->
 
+                </div>
                 <div class="col-md-6 col-xs-12">
                     <div class="box">
                         <div class="box-header">
@@ -272,6 +287,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
+<script src="bower_components/raphael/raphael.min.js"></script>
+<script src="bower_components/morris.js/morris.min.js"></script>
 <script src="dist/js/demo.js"></script>
 <script>
     //更新买入总价
@@ -301,6 +318,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     });
     */
     //更新买入总价,卖出总价，利润
+    //setTimeout('init()', 5000);
+    
     $.ajax({
         url: '/getIncomeAndProfit',
         type: 'get',
@@ -316,6 +335,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
             alert("server error!");
         }
     });
+
+    //更新行情
+    $.ajax({
+            url: '/getAllTx',
+            type: 'get',
+            data: {
+            },
+            success: function (data) {
+                data = eval('(' + data + ')');
+                //alert(data[1].value);
+                var line = new Morris.Line({
+                    element: 'line-chart', //元素id
+                    resize: true,
+                    data: data,
+                    xkey: 'timestamp', //?string
+                    ykeys: ['value'],
+                    labels: ['value'],
+                    lineColors: ['#3c8dbc'],
+                    hideHover: 'auto'
+                });
+            },
+            error: function (e) {
+                alert('server error!');
+            }
+        });
     //更新当前市值
     $.ajax({
         url: '/getLastValue',
@@ -416,6 +460,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             alert("server error!");
         }
     });
+   
 </script>
 </body>
 </html>
