@@ -18,6 +18,8 @@ module.exports = function (app) {
     app.route('/api')
         .get(api.api);
 
+    app.route('/getMyTxHistory')
+        .get(api.getMyTxHistory);
 
     app.route('/getIncomeAndProfit')
         .get(api.getIncomeAndProfit);
