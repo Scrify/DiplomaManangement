@@ -11,6 +11,9 @@ module.exports = function (app) {
     app.route('/register')
         .get(renderPage.renderRegister);
 
+    app.route('/changePwd')
+        .get(renderPage.renderChangePwd);
+
     app.route('/total')
         .get(renderPage.renderTotal);
 
