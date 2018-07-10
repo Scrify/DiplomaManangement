@@ -30,8 +30,53 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <style>
+        #reset-div{
+            z-index: 99999;
+            background-color: rgba(0,0,0,0.5);
+            position: fixed;
+            margin:auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+        }
+        #reset-box{
+            position: relative;
+            left:0;
+        }
+    </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+<div id="reset-div">
+        <div class="register-box" id="reset-box">
+                <div class="register-box-body">
+                    <p class="register-box-msg">修改密码</p>
+                    <form action="#" method="post">
+                        <div class="form-group has-feedback">
+                            <input type="password" class="form-control" name="newpassword" id="newpassword" placeholder="请输入新密码">
+                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <input type="password" class="form-control" name="retypenewpwd" id="retypenewpwd" placeholder="请确认新密码">
+                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                            </div>
+                            <div class="col-xs-4">
+                                <button type="reset" id="cancel" class="btn btn-primary btn-block btn-flat" name="back">取消</button>
+                            </div>
+                            <div class="col-xs-4">
+                                <button type="submit" id="reset" class="btn btn-primary btn-block btn-flat" name="reset" >确认修改</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+</div>
+
 <div class="wrapper">
 
     <!-- Main Header -->
@@ -79,7 +124,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right-container">
-                                    <a href="/logout" class="btn btn-default btn-flat">退出</a>
+                                    <button type="button" class="btn btn-default btn-flat" id="change" name="change" style="float: left;">修改密码</button>
+                                </div>
+                                <div class="pull-right-container">
+                                    <a href="/logout" class="btn btn-default btn-flat" style="float: right;">退出</a>
                                 </div>
                             </li>
                         </ul>
@@ -111,7 +159,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
-                <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
+                <li class="active"><a href="reset.html"><i class="fa fa-link"></i> <span>修改密码</span></a></li>
                 <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
@@ -416,6 +464,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
             alert("server error!");
         }
     });
+    
+    $('#change').click(function () {
+        $("#reset-div").show();
+    });
+
+    $('#cancel').click(function () {
+        $("#reset-div").hide();
+    });
+
+    $('#reset').click(function () {
+        let len = $("#newpassword").val().length;
+        let pwd1 = $("#newpassword").val();
+        let pwd2 = $("#retypenewpwd").val();
+        if(len < 6){
+            alert("密码至少为6位。");
+            return false;
+
+        }
+        if(pwd1 != pwd2){
+            alert("两次输入的密码不一致。");
+            return false;
+        }
+        $("#reset-div").hide();
+    });
+
 </script>
 </body>
 </html>
