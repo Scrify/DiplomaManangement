@@ -59,8 +59,7 @@ exports.login = function (req, res, next) {
                         messages: '未注册用户'
                     });
                 } else{
-                    console.log(docs[0].salt);
-                    password = crypto.pbkdf2Sync(password, docs[0].salt, 10000, 64, 'md5').toString('base64');
+                    password = crypto.pbkdf2Sync(password, 'njustXP2018', 10000, 64, 'md5').toString('base64');
                     if (username == docs[0]._id &&  password == docs[0].pwd) {
                         req.session.username = username;
                         //fc_list[username] = fc;
@@ -112,7 +111,7 @@ exports.register = function (req, res, next) {
         try {
             let cert = await register.registerUser(file, username); //cert
             // console.log(cert);
-            let salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');  //Buffer
+            let salt = 'njustXP2018';  //Buffer
 
 
             //@TODO
@@ -121,7 +120,7 @@ exports.register = function (req, res, next) {
             //需要从salt是个string
             password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
 
-            let write = { _id: username, salt:salt ,pwd: password, ca: cert.toString(), isValid: true };
+            let write = { _id: username ,pwd: password, ca: cert.toString(), isValid: true };
 
             const MongoClient = require('mongodb').MongoClient; //mongo
             let client = await MongoClient.connect('mongodb://localhost:27017/myproject');
