@@ -20,4 +20,7 @@ module.exports = function (app) {
     app.route('/view_details')
         .get(renderPage.renderViewDetails);
 
+    app.route('/tradition')
+        .get(renderPage.renderTradition);
+
 };

@@ -86,3 +86,20 @@ exports.renderViewDetails = function (req, res, next) {
         });
     }
 };
+
+//查看迈入和卖出记录
+exports.renderTradition = function (req, res, next) {
+    // console.log('1');
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        // console.log('total');
+        res.render('tradition', {
+            title: 'Tradition',
+            username: req.session.username
+        });
+    }
+};
