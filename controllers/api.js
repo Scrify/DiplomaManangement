@@ -370,3 +370,40 @@ exports.api = function (req, res, next) {
         res.end();
     })();
 };
+
+exports.getAllTx = function (req, res, next) {
+    var username = req.session.username;
+    console.log("username="+username);
+    if (username === null) {
+        return res.render('login', {
+            title: 'Login',
+            messages: '请先登录!'
+        });
+    }
+    (async () => {
+        try {
+            let fc = fc_list[username];
+
+            let mytx = await fc.mytxall("1");
+            let tx = [];
+
+            for (let k = 1; k < mytx.length; k++) {
+                
+                let writeset = mytx[k].writeset;             
+                let timestamp = mytx[k].timestamp;
+                value = writeset[0].value;
+                tx.push({
+                    'timestamp': timestamp,
+                    'value': value
+                });
+            } 
+            res.write(JSON.stringify(tx));
+
+        } catch (err) {
+            console.error(err);
+            res.write('错误:' + err);
+        }
+        res.end();
+    })();
+
+};

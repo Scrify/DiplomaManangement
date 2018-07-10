@@ -26,4 +26,7 @@ module.exports = function (app) {
 
     app.route('/getLastValue')
         .get(api.getLastValue);
+        
+    app.route('/getAllTx')
+        .get(api.getAllTx);
 };
