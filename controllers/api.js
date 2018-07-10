@@ -75,7 +75,7 @@ exports.login = function (req, res, next) {
                         });
                     }
                 }
-            })
+            });
             mgclient.close();
         } catch (err) {
             console.log('连接出错：', err);
@@ -136,6 +136,10 @@ exports.register = function (req, res, next) {
             });
         } catch (err) {
             console.log('注册出错:', err);
+            return res.render('register', {
+                title: 'Register',
+                messages: '注册失败：'+err
+            });
         }
     })()
 }
