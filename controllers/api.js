@@ -153,7 +153,7 @@ exports.register = function (req, res, next) {
                         mgclient.close();
                         return res.render('register', {
                             title: 'register',
-                            messages: '已注册用户'
+                            messages: '该用户已被注册'
                         });
 
                     }
