@@ -31,7 +31,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <style>
+    <!-- <style>
         #reset-div{
             z-index: 99999;
             background-color: rgba(0,0,0,0.5);
@@ -47,10 +47,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
             position: relative;
             left:0;
         }
-    </style>
+    </style> -->
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div id="reset-div">
+<!-- <div id="reset-div">
         <div class="register-box" id="reset-box">
                 <div class="register-box-body">
                     <p class="register-box-msg">修改密码</p>
@@ -76,7 +76,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </form>
                 </div>
             </div>
-</div>
+</div> -->
 
 <div class="wrapper">
 
@@ -125,7 +125,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right-container">
-                                    <button type="button" class="btn btn-default btn-flat" id="change" name="change" style="float: left;">修改密码</button>
+                                    <!-- <a herf="/changePwd" class="btn btn-default btn-flat" style="float: left;">修改密码</a> -->
+                                    <a href=/changePwd class="btn btn-default btn-flat" style="float: left;">修改密码</a>
+                                    <!-- <button type="button" class="btn btn-default btn-flat" id="change" name="change" style="float: left;">修改密码</button> -->
                                 </div>
                                 <div class="pull-right-container">
                                     <a href="/logout" class="btn btn-default btn-flat" style="float: right;">退出</a>
@@ -161,7 +163,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
 
-                <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li>
+                <!-- <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li> -->
                 <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
                 <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
@@ -484,28 +486,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
     });
 
     
-    $('#change').click(function () {
-        $("#reset-div").show();
-    });
+    // $('#change').click(function () {
+    //     $("#reset-div").show();
+    // });
 
-    $('#cancel').click(function () {
-        $("#reset-div").hide();
-    });
+    // $('#cancel').click(function () {
+    //     $("#reset-div").hide();
+    // });
 
-    $('#reset').click(function () {
-        let len = $("#newpassword").val().length;
-        let pwd1 = $("#newpassword").val();
-        let pwd2 = $("#retypenewpwd").val();
-        if(len < 6){
-            alert("密码至少为6位。");
-            return false;
-        }
-        if(pwd1 != pwd2){
-            alert("两次输入的密码不一致。");
-            return false;
-        }
-        $("#reset-div").hide();
-    });
+    // $('#reset').click(function () {
+    //     let len = $("#newpassword").val().length;
+    //     let pwd1 = $("#newpassword").val();
+    //     let pwd2 = $("#retypenewpwd").val();
+    //     if(len < 6){
+    //         alert("密码至少为6位。");
+    //         return false;
+    //     }
+    //     if(pwd1 != pwd2){
+    //         alert("两次输入的密码不一致。");
+    //         return false;
+    //     }
+    //     $("#reset-div").hide();
+    // });
 </script>
 </body>
 </html>
