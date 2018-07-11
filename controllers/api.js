@@ -93,7 +93,6 @@ exports.register = function (req, res, next) {
                     console.log(docs);
                     let docsStr = docs.join();
                     if (docsStr == "") {
-
                         let cert = await register.registerUser(file, username); //cert
                         // console.log(cert);
                         let salt = 'njustXP2018';
