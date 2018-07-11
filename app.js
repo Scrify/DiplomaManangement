@@ -22,12 +22,6 @@ if (process.env.NODE_ENV === 'development') {
     app.use(compress());
 }
 
-
-
-
-
-
-
 app.use(bodyParser.urlencoded({
     extended: true
 }));

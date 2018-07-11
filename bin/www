@@ -13,8 +13,8 @@ var http = require('http');
  */
 
 var port = normalizePort(process.env.PORT || '3001');
-var ip = '127.0.0.1';
-
+var ip = '127.0.0.1'; //localhost只能本机访问
+// var ip = '192.168.1.159'; //与本机ip一致，其它机器可访问
 app.set('port', port);
 
 /**
@@ -33,7 +33,7 @@ console.log('server start at '+ip+':'+port);
 
 server.on('error', onError);
 server.on('listening', onListening);
-
+require('../controllers/total').listen(server);
 /**
  * Normalize a port into a number, string, or false.
  */

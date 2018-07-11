@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <title><%= title %></title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="plugins/iCheck/square/blue.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <!-- Google Font -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition register-page">
+<div class="register-box">
+    <div class="register-logo">
+        <a href="total.html"><b>虚拟货币</b>小游戏</a>
+    </div>
+    <!-- /.register-logo -->
+    <div class="register-box-body">
+        <p class="register-box-msg">注册一个新用户</p>
+        <form action="/register" method="post">
+        <!-- <form action="#" method="post"> -->
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" name="username" id="username" placeholder="用户名">
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" name="password" id="password" placeholder="请输入您的密码">
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" name="retypepwd" id="retypepwd" placeholder="请确认您的密码">
+                <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <!-- /.col -->
+                <div class="col-xs-8">
+                    
+                </div>
+                <div class="col-xs-4">
+                    <button type="submit" id="register" class="btn btn-primary btn-block btn-flat">注册</button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+        <!-- /.social-auth-links -->
+        <a href="/" class="text-center">已有账号，直接登录></a>
+        <!-- <a href="login.html" class="text-center">已有账号，直接登录></a> -->
+
+    </div>
+    <!-- /.register-box-body -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery 3 -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="plugins/iCheck/icheck.min.js"></script>
+<script>
+    var mess = "<%= messages %>";
+    if (mess){
+        alert(mess);
+    }
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' /* optional */
+        });
+    });
+
+    $('#register').click(function () {
+        let username = $("#username").val();
+        let len = $("#password").val().length;
+        let pwd1 = $("#password").val();
+        let pwd2 = $("#retypepwd").val();
+        if(username == ""){
+		    alert("用户名不能为空！");
+            return false;
+		}else if(username == "admin"){
+            alert("用户名不能为admin！");
+            return false;
+        }
+        if(len < 6){
+            alert("密码至少为6位。");
+            return false;
+
+        }
+        if(pwd1 != pwd2){
+            alert("两次输入的密码不一致。");
+            return false;
+        }
+    });
+</script>
+</body>
+</html>
