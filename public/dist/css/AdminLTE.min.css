@@ -3464,20 +3464,26 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .login-logo a, .register-logo a {
-    color: #444
+    color: rgb(240, 232, 232);
 }
 
 .login-page, .register-page {
-    background: #d2d6de
+    background: #d2d6de url("../img/bg1.jpg");
+    background-size: cover;
 }
 
 .login-box, .register-box {
+    position: relative;
+    left: 25%;
     width: 360px;
     margin: 7% auto
+
 }
 
 @media (max-width: 768px) {
     .login-box, .register-box {
+        position: relative;
+        left: 0;
         width: 90%;
         margin-top: 20px
     }
