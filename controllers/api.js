@@ -18,37 +18,12 @@ var mgclient = null;
 exports.login = function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
-    // // console.log(username);
-    // // next()
-    // (async () => {
-    //     try {
-    //         let fc = await FConn.FConnect(username);
-    //         if (fc === undefined) {
-    //             return res.render('login', {
-    //                 title: 'Login',
-    //                 messages: '未注册用户'
-    //             });
-    //         } else {
-    //             req.session.username = username;
-    //             fc_list[username] = fc;
-    //             return res.redirect('total');
-    //         }
-    //     } catch (err) {
-    //         // console.error(err);
-    //         if (err) {
-    //             return res.render('login', {
-    //                 title: 'Login',
-    //                 messages: err
-    //             });
-    //         }
-    //     }
-    // })();
     (async () => {
         try {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({ "_id": username }).toArray(function (err, docs) {
+            await col.find({"_id": username}).toArray(function (err, docs) {
                 assert.equal(err, null);
                 console.log(docs);
                 let docsStr = docs.join();
@@ -104,17 +79,14 @@ exports.register = function (req, res, next) {
     let password = req.body.password;
 
     var register = require('../../fabcar/registerUser');
-    var args = process.argv.splice(2);
     var file = 'crtuser.json';
-    // var username = args[1];
     (async () => {
         try {
-
             //begin
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({ "_id": username }).toArray(function (err, docs) {
+            await col.find({"_id": username}).toArray(function (err, docs) {
                 (async () => {
                     console.log(1);
                     assert.equal(err, null);
@@ -124,16 +96,10 @@ exports.register = function (req, res, next) {
 
                         let cert = await register.registerUser(file, username); //cert
                         // console.log(cert);
-                        let salt = 'njustXP2018';  //Buffer
-
-
-                        //@TODO
-                        // 把salt=>string
-
-                        //需要从salt是个string
+                        let salt = 'njustXP2018';
                         password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
 
-                        let write = { _id: username, pwd: password, ca: cert.toString(), isValid: true };
+                        let write = {_id: username, pwd: password, ca: cert.toString(), isValid: true};
 
                         // const MongoClient = require('mongodb').MongoClient; //mongo
                         mgclient = await MongoClient.connect('mongodb://localhost:27017/myproject');
@@ -147,24 +113,16 @@ exports.register = function (req, res, next) {
                             title: 'Login',
                             messages: '注册成功'
                         });
-
-
                     } else {
                         mgclient.close();
                         return res.render('register', {
                             title: 'register',
                             messages: '该用户已被注册'
                         });
-
                     }
-                    
-                    
                 })()
             });
-            
             //end
-
-
         } catch (err) {
             console.log('注册出错:', err);
             return res.render('register', {
@@ -173,7 +131,47 @@ exports.register = function (req, res, next) {
             });
         }
     })()
-}
+};
+
+exports.changePwd = function (req, res, next) {
+    let username = req.session.username;
+    let password = req.body.password;
+    (async () => {
+        try {
+            //begin
+            mgclient = await MongoClient.connect(DBurl);
+            let col = mgclient.db().collection('users');
+            password = crypto.pbkdf2Sync(password, 'njustXP2018', 10000, 64, 'md5').toString('base64');
+            //查询mongodb并与输入的帐号密码进行匹配。
+            await col.updateOne({"_id": username}, {$set: {"pwd": password}}, function (err, doc) {
+                let result = {};
+                // console.log(doc);
+                if (doc.result.ok !== 1) {
+                    console.log(err);
+                    result.code = 400;
+                    result.message = '修改密码错误' + err;
+                } else {
+                    let username = req.session.username;
+                    delete fc_list[username];
+                    req.session.destroy();
+                    result.code = 200;
+                    result.message = '修改成功，请重新登录！';
+                }
+                res.write(JSON.stringify(result));
+                res.end();
+            });
+            mgclient.close();
+            //end
+        } catch (err) {
+            res.write(JSON.stringify({
+                'code': 400,
+                'message': '修改密码错误' + err
+            }));
+            res.end();
+        }
+    })()
+};
+
 //计算持有虚币个数，最后交易价格，传给前端用于计算当前市值
 exports.getLastValue = function (req, res, next) {
     var username = req.session.username;
@@ -220,7 +218,7 @@ exports.getLastValue = function (req, res, next) {
     })();
 };
 
-exports.getMyTxHistory = function(req, res){
+exports.getMyTxHistory = function (req, res) {
     var username = req.session.username;
     // console.log(username);
     if (username === null) {
@@ -271,12 +269,12 @@ exports.getMyTxHistory = function(req, res){
                             count = k;
                         }
                     }
-                    if (count !== (the_history.length - 1)){
+                    if (count !== (the_history.length - 1)) {
                         let the_sell = {};
                         the_sell.key = the_b.key;
-                        the_sell.is_delete = the_history[count+1].isDelete;
-                        the_sell.value = the_history[count+1].value;
-                        the_sell.timestamp = the_history[count+1].timestamp;
+                        the_sell.is_delete = the_history[count + 1].isDelete;
+                        the_sell.value = the_history[count + 1].value;
+                        the_sell.timestamp = the_history[count + 1].timestamp;
                         the_sell.isBuy = false;
                         data.push(the_sell);
                     }
@@ -404,7 +402,7 @@ exports.api = function (req, res, next) {
 
 exports.getAllTx = function (req, res, next) {
     var username = req.session.username;
-    console.log("username="+username);
+    console.log("username=" + username);
     if (username === null) {
         return res.render('login', {
             title: 'Login',
@@ -419,15 +417,15 @@ exports.getAllTx = function (req, res, next) {
             let tx = [];
 
             for (let k = 1; k < mytx.length; k++) {
-                
-                let writeset = mytx[k].writeset;             
+
+                let writeset = mytx[k].writeset;
                 let timestamp = mytx[k].timestamp;
                 value = writeset[0].value;
                 tx.push({
                     'timestamp': timestamp,
                     'value': value
                 });
-            } 
+            }
             res.write(JSON.stringify(tx));
 
         } catch (err) {

@@ -152,14 +152,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <form class="form-horizontal">
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label for="bid" class="col-sm-2 control-label">请输入新密码：</label>
-                                    <div class="col-sm-10">
+                                    <label for="pwd1" class="col-sm-3 control-label">新密码：</label>
+                                    <div class="col-sm-9">
                                         <input type="password" class="form-control" id="pwd1" name="pwd1"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="value" class="col-sm-2 control-label">请确认新密码：</label>
-                                    <div class="col-sm-10">
+                                    <label for="pwd2" class="col-sm-3 control-label">确认密码：</label>
+                                    <div class="col-sm-9">
                                         <input type="password" class="form-control" id="pwd2" name="pwd2"/>
                                     </div>
                                 </div>
@@ -200,53 +200,33 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <script>
-    //以下代码低级冗余设计，应采用更简单办法来获取bid和value
-    /*
-    var url = location.search; //获取url中"?"符后的字串
-    var theRequest = new Object();
-    if (url.indexOf("?") != -1) {
-        var str = url.substr(1);
-        strs = str.split("&");
-        for (var i = 0; i < strs.length; i++) {
-            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
-        }
-    }
-    var bid = theRequest.bid;
-    //以上代码可以去除
-    $.ajax({
-        url:'/api',
-        type:'get',
-        data:{
-            cmd:'mykeys("bid01","bid99")'  //返回太多，应调用mykey(bid)
-        },
-        success:function(data){
-            var data = eval('(' + data + ')');
-            var b = data[bid];
-            $('#bid').val(bid);
-            $('#value').val(b.value);
-        },
-        error:function(e){
-            alert('server error!');
-        }
-    });
-    */
-     
-    //以上ajax可以去掉，修改[1]total上传递bid与value,[2]服务器渲染bid与value,[3]本页用ajax读取这两个值
-    //更简单的办法，可去掉本页面。
-    //在tatal页面上，利用动态页面编程，点击‘购买'之后弹出一个输入确认框，输入价格，点击确认，再执行api
-   
     $('#change').click(function () {
         let len = $("#pwd1").val().length;
         let pwd1 = $("#pwd1").val();
-        let pwd2 = $("#pdd2").val();
-        if(len < 6){
+        let pwd2 = $("#pwd2").val();
+        if (len < 6) {
             alert("密码至少为6位。");
-            return false;
-
         }
-        if(pwd1 != pwd2){
+        else if (pwd1 != pwd2) {
             alert("两次输入的密码不一致。");
-            return false;
+        } else {
+            $.ajax({
+                url: '/changePwd',
+                type: 'post',
+                data: {
+                    password: pwd1
+                },
+                success: function (data) {
+                    data = eval('(' + data + ')');
+                    alert(data.message);
+                    if (data.code === 200) {
+                        window.location = '/';
+                    }
+                },
+                error: function (e) {
+                    alert('server error: '+ e);
+                }
+            });
         }
     });
 </script>

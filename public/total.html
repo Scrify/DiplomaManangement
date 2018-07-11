@@ -15,7 +15,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-    <link rel="stylesheet" href="../../bower_components/morris.js/morris.css">
+    <link rel="stylesheet" href="bower_components/morris.js/morris.css">
 
     <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <!-- Theme style -->
@@ -161,8 +161,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
 
-                <li class="active"><a href="reset.html"><i class="fa fa-link"></i> <span>修改密码</span></a></li>
-                <li class="active"><a href="tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
+                <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li>
+                <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
                 <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
@@ -341,34 +341,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="bower_components/morris.js/morris.min.js"></script>
 <script src="dist/js/demo.js"></script>
 <script>
-    //更新买入总价
-    /*
-    $.ajax({    //可取消，通过修改api.js的getIncomeAndProfit，应减少mytx()调用，避免遍历大负载计算
-        url: '/api',
-        type: 'get',
-        data: {
-            cmd: 'mytx()'
-        },
-        success: function (data) {
-            // alert(data);
-            data = eval('(' + data + ')');
-            let total_cost = 0;
-            data.forEach(function (tx) {
-                tx['writeset'].forEach(function (item) {
-                    total_cost += Number(item.value);
-                });
-            });
-            $('#total_cost').text(total_cost);
-            // alert(total_cost);
-
-        },
-        error: function (e) {
-            alert("server error!");
-        }
-    });
-    */
-    //更新买入总价,卖出总价，利润
-    //setTimeout('init()', 5000);
     
     $.ajax({
         url: '/getIncomeAndProfit',
@@ -527,7 +499,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         if(len < 6){
             alert("密码至少为6位。");
             return false;
-
         }
         if(pwd1 != pwd2){
             alert("两次输入的密码不一致。");

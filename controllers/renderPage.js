@@ -30,6 +30,21 @@ exports.renderRegister = function (req, res) {
     // next()
 };
 
+exports.renderChangePwd = function(req, res){
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        // console.log('total');
+        res.render('reset', {
+            title: 'Change Password',
+            username: req.session.username
+        });
+    }
+};
+
 //买入页面
 exports.renderBuy = function (req, res) {
     if (!req.session.username) {

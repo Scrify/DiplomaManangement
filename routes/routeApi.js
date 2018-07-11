@@ -15,6 +15,9 @@ module.exports = function (app) {
     app.route('/logout')
         .get(api.logout);
 
+    app.route('/changePwd')
+        .post(api.changePwd);
+
     app.route('/api')
         .get(api.api);
 
