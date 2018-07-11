@@ -5,7 +5,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html>
 <head>
-    <meta charset="utf-8" http-equiv="refresh" content="5">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=chrome">
     <title><%= title %></title>
     <!-- Tell the browser to be responsive to screen width -->
@@ -31,8 +31,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <script src="/socket.io/socket.io.js"></script>
     <style>
-        #reset-div{
+        #buy-div{
             z-index: 99999;
             background-color: rgba(0,0,0,0.5);
             position: fixed;
@@ -43,39 +44,46 @@ scratch. This page gets rid of all links and provides the needed markup only.
             bottom: 0;
             display: none;
         }
-        #reset-box{
+        #buy-box{
             position: relative;
             left:0;
         }
     </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div id="reset-div">
-        <div class="register-box" id="reset-box">
-                <div class="register-box-body">
-                    <p class="register-box-msg">修改密码</p>
-                    <form action="#" method="post">
-                        <div class="form-group has-feedback">
-                            <input type="password" class="form-control" name="newpassword" id="newpassword" placeholder="请输入新密码">
-                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+<div id="buy-div">
+    <div class="register-box" id="buy-box">
+        <div class="register-box-body">
+            <p class="register-box-msg">修改密码</p>
+            <form class="form-horizontal">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="bid" class="col-sm-6 control-label">货币ID：</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="bid" disabled="">
                         </div>
-                        <div class="form-group has-feedback">
-                            <input type="password" class="form-control" name="retypenewpwd" id="retypenewpwd" placeholder="请确认新密码">
-                            <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="value" class="col-sm-6 control-label">当时价格：</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="value" disabled="">
                         </div>
-                        <div class="row">
-                            <div class="col-xs-4">
-                            </div>
-                            <div class="col-xs-4">
-                                <button type="reset" id="cancel" class="btn btn-primary btn-block btn-flat" name="back">取消</button>
-                            </div>
-                            <div class="col-xs-4">
-                                <button type="submit" id="reset" class="btn btn-primary btn-block btn-flat" name="reset" >确认修改</button>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_value" class="col-sm-6 control-label">买入价格：</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="new_value">
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+
+                <div class="box-footer">
+                    <button type="button" id="cancel" class="btn btn-default">取消</button>
+                    <button type="button" id="to_buy" class="btn btn-info pull-right">购买</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div class="wrapper">
@@ -125,7 +133,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right-container">
-                                    <button type="button" class="btn btn-default btn-flat" id="change" name="change" style="float: left;">修改密码</button>
+                                    <!-- <a herf="/changePwd" class="btn btn-default btn-flat" style="float: left;">修改密码</a> -->
+                                    <a href=/changePwd class="btn btn-default btn-flat" style="float: left;">修改密码</a>
+                                    <!-- <button type="button" class="btn btn-default btn-flat" id="change" name="change" style="float: left;">修改密码</button> -->
                                 </div>
                                 <div class="pull-right-container">
                                     <a href="/logout" class="btn btn-default btn-flat" style="float: right;">退出</a>
@@ -161,7 +171,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
 
-                <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li>
+                <!-- <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li> -->
                 <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
                 <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
@@ -341,171 +351,262 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="bower_components/morris.js/morris.min.js"></script>
 <script src="dist/js/demo.js"></script>
 <script>
-    
-    $.ajax({
-        url: '/getIncomeAndProfit',
-        type: 'get',
-        data: {
-        },
-        success: function (data) {
-            data = eval('('+data+')');
-            $('#total_profit').text(data.profit);
-            $('#total_income').text(data.income);
-            $('#total_cost').text(data.buyin); //买入总价
-        },
-        error: function (e) {
-            alert("server error!");
+
+    let socket = io.connect('http://127.0.0.1:3001');
+    let username = "<%= username%>";
+    socket.on('connect', function () {
+        socket.emit('update', username);
+    });
+    socket.on('buy', function (data) {
+        if (data.code === 200){
+            socket.emit('update', username);
+            // socket.broadcast.emit('update', username);
         }
     });
+    socket.on('to_update', function () {
+        socket.emit('update', username);
+    });
+    socket.on('update', function (data) {
+        var mine_table = $('#mine_table').DataTable();
 
-    //更新行情
-    $.ajax({
-            url: '/getAllTx',
-            type: 'get',
-            data: {
-            },
-            success: function (data) {
-                data = eval('(' + data + ')');
-                //alert(data[1].value);
-                var line = new Morris.Line({
-                    element: 'line-chart', //元素id
-                    resize: true,
-                    data: data,
-                    xkey: 'timestamp', //?string
-                    ykeys: ['value'],
-                    labels: ['value'],
-                    lineColors: ['#3c8dbc'],
-                    hideHover: 'auto'
-                });
-            },
-            error: function (e) {
-                alert('server error!');
+        var no_mine_table = $('#not_mine_table').DataTable();
+        if (mine_table) {
+            mine_table.clear();    //清空数据
+            mine_table.destroy();         //销毁datatable
+        }
+        if (no_mine_table) {
+            no_mine_table.clear();    //清空数据
+            no_mine_table.destroy();
+        }
+        // alert(JSON.stringify(data));
+        var html1 = '';
+        // isnotMine
+        var html2 = '';
+        var arr1 = [];
+        var arr2 = [];
+        for (let i in data) {
+            data[i].bid = i;
+            if (data[i].isMine === true) {
+                arr1.push(data[i]); //属性
             }
+            //arr.push(obj[i]); //值
+        }
+        for (let i in data) {
+            data[i].bid = i;
+            if (data[i].isMine === false) {
+                arr2.push(data[i]); //属性
+            }
+        }
+        // console.log(arr1, arr2);
+        $.each(arr1, function (i, item) {
+            // console.warn(i, item);
+            var a = i + 1;
+            var bid = arr1[i].bid;
+            //我的虚币
+            html1 += '<tr><td id="tds">' + a +
+                '<td id="tds">' + bid + '</td>' +
+                '<td id="tds">' + item['value'] + '</td>' +
+                '<td id="tds">' + item['timestamp'] + '</td>' +
+                '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
+                '<button type="button" class="btn btn-info">详  情</button>' +
+                '</a>' +
+                '</td></tr>'
         });
-    //更新当前市值
-    $.ajax({
-        url: '/getLastValue',
-        type: 'get',
-        data: {
-        },
-        success: function (data) {
-            data = eval('('+data+')');
-            $('#total_value').text(data.count*data.last_tx_value);
-        },
-        error: function (e) {
-            alert("server error!");
-        }
-    });
-    //更新我的虚币，他人虚币，两个表
-    $.ajax({
-        url: '/api',
-        type: 'get',
-        data: {
-            cmd: 'mykeys("bid01","bid99")'
-        },
-        success: function (data) {
-            data = eval('(' + data + ')');
-            var html1 = '';
-            // isnotMine
-            var html2 = '';
-            var arr1 = [];
-            var arr2 = [];
-            for (let i in data) {
-                data[i].bid = i;
-                if (data[i].isMine === true) {
-                    arr1.push(data[i]); //属性
-                }
-                //arr.push(obj[i]); //值
-            }
-            for (let i in data) {
-                data[i].bid = i;
-                if (data[i].isMine === false) {
-                    arr2.push(data[i]); //属性
-                }
-            }
-            // console.log(arr1, arr2);
-            $.each(arr1, function (i, item) {
-                // console.warn(i, item);
-                var a = i + 1;
-                var bid = arr1[i].bid;
-                //我的虚币
-                html1 += '<tr><td id="tds">' + a +
-                    '<td id="tds">' + bid + '</td>' +
-                    '<td id="tds">' + item['value'] + '</td>' +
-                    '<td id="tds">' + item['timestamp'] + '</td>' +
-                    '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
-                    '<button type="button" class="btn btn-info">详  情</button>' +
-                    '</a>' +
-                    '</td></tr>'
-            });
-            //他人虚币
-            $.each(arr2, function (i, item) {
-                // console.warn(i, item);
-                var a = i + 1;
-                var bid = arr2[i].bid;
-                html2 += '<tr><td id="tds">' + a +
-                    '<td id="tds">' + bid + '</td>' +
-                    '<td id="tds">' + item['value'] + '</td>' +
-                    '<td id="tds">' + item['timestamp'] + '</td>' +
-                    '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
-                    '<button type="button" class="btn btn-info pull-eft">详  情</button>' +
-                    '</a>' +
-                    //'<a href=' + 'buy?bid=' + bid + '>' +
-                    '<a href=' + 'buy?bid=' + bid + '&value=' + item['value'] + '>' +
-                    '<button type="button" class="btn btn-success pull-right">购  买</button>'+
-                    '</a>' + '</td></tr>'
-            });
-            // console.log(arr1);
-            /*alert("hello")*/
-            $('#mine').append(html1);
-            // $('#title2').after(html2);
-            $('#mine_table').dataTable({  //文档中好像用.on事件函数
-                "initComplete": function () {
-                    var api = this.api();
-                    api.$('#tds').click(function () {
-                        api.search(this.innerHTML).draw();
-                    });
-                }
-            });
-            $('#not_mine').append(html2);
-            // $('#title2').after(html2);
-            $('#not_mine_table').dataTable({
-                "initComplete": function () {
-                    var api = this.api();
-                    api.$('#tds').click(function () {
-                        api.search(this.innerHTML).draw();
-                    });
-                }
-            });
-        },
-        error: function (e) {
-            alert("server error!");
-        }
+        //他人虚币
+        $.each(arr2, function (i, item) {
+            // console.warn(i, item);
+            var a = i + 1;
+            var bid = arr2[i].bid;
+            html2 += '<tr><td id="tds">' + a +
+                '<td id="tds">' + bid + '</td>' +
+                '<td id="tds">' + item['value'] + '</td>' +
+                '<td id="tds">' + item['timestamp'] + '</td>' +
+                '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
+                '<button type="button" class="btn btn-info pull-eft">详  情</button>' +
+                '</a>' +
+                //'<a href=' + 'buy?bid=' + bid + '>' +
+                // '<a href=' + 'buy?bid=' + bid + '&value=' + item['value'] + '>' +
+                '<button id="buy_coin" type="button" class="btn btn-success pull-right">购  买</button>'+
+                // '</a>' +
+                '</td></tr>'
+        });
+        // console.log(arr1);
+        /*alert("hello")*/
+        // $('#title2').after(html2);
+        $('#mine').append(html1);
+        $('#mine_table').DataTable({  //文档中好像用.on事件函数
+        });
+        $('#not_mine').append(html2);
+        // $('#title2').after(html2);
+
+        $('#not_mine_table').DataTable({
+        });
+
+        $('#buy_coin').click(function () {
+            $("#buy-div").show();
+            let row = $(this).parent().parent().find("td");
+            let bid = row.eq(1).text();
+            let value = row.eq(2).text();
+            $('#bid').val(bid);
+            $('#value').val(value);
+        });
+
+        $('#cancel').click(function () {
+            $("#buy-div").hide();
+        });
     });
 
-    
-    $('#change').click(function () {
-        $("#reset-div").show();
+    $('#to_buy').click(function () {
+        let bid = $('#bid').val();
+        let new_value = $('#new_value').val();
+        let cmd = 'invoke("put","'+bid+'","'+new_value+'")';
+        socket.emit('buy',username,cmd);
+        $('#buy-div').hide();
     });
 
-    $('#cancel').click(function () {
-        $("#reset-div").hide();
-    });
 
-    $('#reset').click(function () {
-        let len = $("#newpassword").val().length;
-        let pwd1 = $("#newpassword").val();
-        let pwd2 = $("#retypenewpwd").val();
-        if(len < 6){
-            alert("密码至少为6位。");
-            return false;
-        }
-        if(pwd1 != pwd2){
-            alert("两次输入的密码不一致。");
-            return false;
-        }
-        $("#reset-div").hide();
-    });
+
+    // $.ajax({
+    //     url: '/getIncomeAndProfit',
+    //     type: 'get',
+    //     data: {
+    //     },
+    //     success: function (data) {
+    //         data = eval('('+data+')');
+    //         $('#total_profit').text(data.profit);
+    //         $('#total_income').text(data.income);
+    //         $('#total_cost').text(data.buyin); //买入总价
+    //     },
+    //     error: function (e) {
+    //         alert("server error!");
+    //     }
+    // });
+    //
+    // //更新行情
+    // $.ajax({
+    //         url: '/getAllTx',
+    //         type: 'get',
+    //         data: {
+    //         },
+    //         success: function (data) {
+    //             data = eval('(' + data + ')');
+    //             //alert(data[1].value);
+    //             var line = new Morris.Line({
+    //                 element: 'line-chart', //元素id
+    //                 resize: true,
+    //                 data: data,
+    //                 xkey: 'timestamp', //?string
+    //                 ykeys: ['value'],
+    //                 labels: ['value'],
+    //                 lineColors: ['#3c8dbc'],
+    //                 hideHover: 'auto'
+    //             });
+    //         },
+    //         error: function (e) {
+    //             alert('server error!');
+    //         }
+    //     });
+    // //更新当前市值
+    // $.ajax({
+    //     url: '/getLastValue',
+    //     type: 'get',
+    //     data: {
+    //     },
+    //     success: function (data) {
+    //         data = eval('('+data+')');
+    //         $('#total_value').text(data.count*data.last_tx_value);
+    //     },
+    //     error: function (e) {
+    //         alert("server error!");
+    //     }
+    // });
+
+    // //更新我的虚币，他人虚币，两个表
+    // $.ajax({
+    //     url: '/api',
+    //     type: 'get',
+    //     data: {
+    //         cmd: 'mykeys("bid01","bid99")'
+    //     },
+    //     success: function (data) {
+    //         data = eval('(' + data + ')');
+    //         var html1 = '';
+    //         // isnotMine
+    //         var html2 = '';
+    //         var arr1 = [];
+    //         var arr2 = [];
+    //         for (let i in data) {
+    //             data[i].bid = i;
+    //             if (data[i].isMine === true) {
+    //                 arr1.push(data[i]); //属性
+    //             }
+    //             //arr.push(obj[i]); //值
+    //         }
+    //         for (let i in data) {
+    //             data[i].bid = i;
+    //             if (data[i].isMine === false) {
+    //                 arr2.push(data[i]); //属性
+    //             }
+    //         }
+    //         // console.log(arr1, arr2);
+    //         $.each(arr1, function (i, item) {
+    //             // console.warn(i, item);
+    //             var a = i + 1;
+    //             var bid = arr1[i].bid;
+    //             //我的虚币
+    //             html1 += '<tr><td id="tds">' + a +
+    //                 '<td id="tds">' + bid + '</td>' +
+    //                 '<td id="tds">' + item['value'] + '</td>' +
+    //                 '<td id="tds">' + item['timestamp'] + '</td>' +
+    //                 '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
+    //                 '<button type="button" class="btn btn-info">详  情</button>' +
+    //                 '</a>' +
+    //                 '</td></tr>'
+    //         });
+    //         //他人虚币
+    //         $.each(arr2, function (i, item) {
+    //             // console.warn(i, item);
+    //             var a = i + 1;
+    //             var bid = arr2[i].bid;
+    //             html2 += '<tr><td id="tds">' + a +
+    //                 '<td id="tds">' + bid + '</td>' +
+    //                 '<td id="tds">' + item['value'] + '</td>' +
+    //                 '<td id="tds">' + item['timestamp'] + '</td>' +
+    //                 '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
+    //                 '<button type="button" class="btn btn-info pull-eft">详  情</button>' +
+    //                 '</a>' +
+    //                 //'<a href=' + 'buy?bid=' + bid + '>' +
+    //                 '<a href=' + 'buy?bid=' + bid + '&value=' + item['value'] + '>' +
+    //                 '<button type="button" class="btn btn-success pull-right">购  买</button>'+
+    //                 '</a>' + '</td></tr>'
+    //         });
+    //         // console.log(arr1);
+    //         /*alert("hello")*/
+    //         $('#mine').append(html1);
+    //         // $('#title2').after(html2);
+    //         $('#mine_table').dataTable({  //文档中好像用.on事件函数
+    //             "initComplete": function () {
+    //                 var api = this.api();
+    //                 api.$('#tds').click(function () {
+    //                     api.search(this.innerHTML).draw();
+    //                 });
+    //             }
+    //         });
+    //         $('#not_mine').append(html2);
+    //         // $('#title2').after(html2);
+    //         $('#not_mine_table').dataTable({
+    //             "initComplete": function () {
+    //                 var api = this.api();
+    //                 api.$('#tds').click(function () {
+    //                     api.search(this.innerHTML).draw();
+    //                 });
+    //             }
+    //         });
+    //     },
+    //     error: function (e) {
+    //         alert("server error!");
+    //     }
+    // });
 </script>
 </body>
 </html>
