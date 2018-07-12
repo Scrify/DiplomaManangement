@@ -78,7 +78,7 @@ io.sockets.on('connection', function (_socket) {
                     'income': income,
                     'profit': profit,
                     'buyin': buyin
-                })
+                });
 
                 let mytxall = await fc.mytxall("1");
                 let tx = [];
@@ -94,8 +94,6 @@ io.sockets.on('connection', function (_socket) {
                     });
                 }
                 _socket.emit('update_line', tx)
-
-
             } catch (err) {
                 console.error(err);
             }
