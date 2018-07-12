@@ -23,34 +23,31 @@ exports.login = function (req, res, next) {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({"_id": username}).toArray(function (err, docs) {
-                assert.equal(err, null);
-                console.log(docs);
-                let docsStr = docs.join();
-                if (docsStr == "") {
-                    //throw new Error('用户不存在');
+            let docs = await col.find({ "_id": username }).toArray();
+            let docsStr = docs.join();
+            if (docsStr === "") {
+                //throw new Error('用户不存在');
+                return res.render('login', {
+                    title: 'Login',
+                    messages: '未注册用户'
+                });
+            } else {
+                password = crypto.pbkdf2Sync(password, 'njustXP2018', 10000, 64, 'md5').toString('base64');
+                if (username === docs[0]._id && password === docs[0].pwd) {
+                    req.session.username = username;
+                    //fc_list[username] = fc;
+                    (async () => {
+                        let fc = await FConn.FConnect(username);
+                        fc_list[username] = fc;
+                        return res.redirect('total');
+                    })()
+                } else {
                     return res.render('login', {
                         title: 'Login',
-                        messages: '未注册用户'
+                        messages: '密码错误'
                     });
-                } else {
-                    password = crypto.pbkdf2Sync(password, 'njustXP2018', 10000, 64, 'md5').toString('base64');
-                    if (username == docs[0]._id && password == docs[0].pwd) {
-                        req.session.username = username;
-                        //fc_list[username] = fc;
-                        (async () => {
-                            let fc = await FConn.FConnect(username);
-                            fc_list[username] = fc;
-                            return res.redirect('total');
-                        })()
-                    } else {
-                        return res.render('login', {
-                            title: 'Login',
-                            messages: '密码错误'
-                        });
-                    }
                 }
-            });
+            }
             mgclient.close();
         } catch (err) {
             console.log('连接出错：', err);
@@ -74,6 +71,34 @@ exports.logout = function (req, res, next) {
     });
 };
 
+
+exports.confirm = function (req, res, next) {
+    let username = req.body.username;
+    console.log(username);
+
+
+    try {
+        (async () => {
+            mgclient = await MongoClient.connect(DBurl);
+            let col = mgclient.db().collection('users');
+
+            let docs = await col.find({ "_id": username }).toArray();
+            let docsStr = docs.join();
+            if (docsStr === "") {
+                // var e = true;
+                res.write('true');
+            } else {
+                //var e = false;
+                res.write('false');
+            }
+            res.end();
+            mgclient.close();
+
+        })()
+    } catch (err) {
+
+    }
+};
 exports.register = function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
@@ -85,42 +110,20 @@ exports.register = function (req, res, next) {
             //begin
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
-            //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({"_id": username}).toArray(function (err, docs) {
-                (async () => {
-                    console.log(1);
-                    assert.equal(err, null);
-                    console.log(docs);
-                    let docsStr = docs.join();
-                    if (docsStr == "") {
-                        let cert = await register.registerUser(file, username); //cert
-                        // console.log(cert);
-                        let salt = 'njustXP2018';
-                        password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
-
-                        let write = {_id: username, pwd: password, ca: cert.toString(), isValid: true};
-
-                        // const MongoClient = require('mongodb').MongoClient; //mongo
-                        mgclient = await MongoClient.connect('mongodb://localhost:27017/myproject');
-                        let col = mgclient.db().collection('users');
-                        let r = await col.insertOne(write);
-                        const assert = require('assert');
-                        assert.equal(1, r.insertedCount);
-                        mgclient.close();
-
-                        return res.render('login', {
-                            title: 'Login',
-                            messages: '注册成功'
-                        });
-                    } else {
-                        mgclient.close();
-                        return res.render('register', {
-                            title: 'register',
-                            messages: '该用户已被注册'
-                        });
-                    }
-                })()
+            let cert = await register.registerUser(file, username); //cert
+            // console.log(cert);
+            let salt = 'njustXP2018';
+            password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
+            let write = { _id: username, pwd: password, ca: cert.toString(), isValid: true };
+            let r = await col.insertOne(write);
+            const assert = require('assert');
+            assert.equal(1, r.insertedCount);
+            mgclient.close();
+            return res.render('login', {
+                title: 'Login',
+                messages: '注册成功'
             });
+
             //end
         } catch (err) {
             console.log('注册出错:', err);
@@ -134,21 +137,26 @@ exports.register = function (req, res, next) {
 
 exports.changePwd = function (req, res, next) {
     let username = req.session.username;
-    let password = req.body.password;
+    let old_pwd = req.body.old_pwd;
+    let new_pwd = req.body.new_pwd;
     (async () => {
         try {
             //begin
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
-            password = crypto.pbkdf2Sync(password, 'njustXP2018', 10000, 64, 'md5').toString('base64');
-            //查询mongodb并与输入的帐号密码进行匹配。
-            await col.updateOne({"_id": username}, {$set: {"pwd": password}}, function (err, doc) {
-                let result = {};
-                // console.log(doc);
+            old_pwd = crypto.pbkdf2Sync(old_pwd, 'njustXP2018', 10000, 64, 'md5').toString('base64');
+            let docs = await col.find({ "_id": username ,"pwd":old_pwd}).toArray();
+            let docs_str = docs.join();
+            let result = {};
+            if (docs_str === ""){
+                result.code = 404;
+                result.message = '原密码错误！';
+            }else {
+                new_pwd = crypto.pbkdf2Sync(new_pwd, 'njustXP2018', 10000, 64, 'md5').toString('base64');
+                let doc = await col.updateOne({ "_id": username }, { $set: { "pwd": new_pwd } });
                 if (doc.result.ok !== 1) {
-                    console.log(err);
                     result.code = 400;
-                    result.message = '修改密码错误' + err;
+                    result.message = '修改密码错误！';
                 } else {
                     let username = req.session.username;
                     delete fc_list[username];
@@ -156,15 +164,15 @@ exports.changePwd = function (req, res, next) {
                     result.code = 200;
                     result.message = '修改成功，请重新登录！';
                 }
-                res.write(JSON.stringify(result));
-                res.end();
-            });
+            }
+            res.write(JSON.stringify(result));
+            res.end();
             mgclient.close();
             //end
         } catch (err) {
             res.write(JSON.stringify({
-                'code': 400,
-                'message': '修改密码错误' + err
+                code: 400,
+                message: '修改密码错误' + err
             }));
             res.end();
         }
