@@ -87,7 +87,7 @@ io.sockets.on('connection', function (_socket) {
     
                     let writeset = mytxall[k].writeset;
                     let timestamp = mytxall[k].timestamp;
-                    value = writeset[0].value;
+                    let value = writeset[0].value;
                     tx.push({
                         'timestamp': timestamp,
                         'value': value

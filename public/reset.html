@@ -147,6 +147,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <form class="form-horizontal">
                             <div class="box-body">
                                 <div class="form-group">
+                                    <label for="old_pwd" class="col-sm-3 control-label">旧密码：</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" class="form-control" id="old_pwd" name="old_pwd"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label for="pwd1" class="col-sm-3 control-label">新密码：</label>
                                     <div class="col-sm-9">
                                         <input type="password" class="form-control" id="pwd1" name="pwd1"/>
@@ -197,19 +203,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
     $('#change').click(function () {
         let len = $("#pwd1").val().length;
+        let old_pwd = $("#old_pwd").val();
         let pwd1 = $("#pwd1").val();
         let pwd2 = $("#pwd2").val();
         if (len < 6) {
             alert("密码至少为6位。");
         }
-        else if (pwd1 != pwd2) {
+        else if (pwd1 !== pwd2) {
             alert("两次输入的密码不一致。");
         } else {
             $.ajax({
                 url: '/changePwd',
                 type: 'post',
                 data: {
-                    password: pwd1
+                    old_pwd: old_pwd,
+                    new_pwd: pwd1
                 },
                 success: function (data) {
                     data = eval('(' + data + ')');
