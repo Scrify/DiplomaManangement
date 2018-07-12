@@ -23,7 +23,7 @@ exports.login = function (req, res, next) {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({"_id": username}).toArray(function (err, docs) {
+            await col.find({ "_id": username }).toArray(function (err, docs) {
                 assert.equal(err, null);
                 console.log(docs);
                 let docsStr = docs.join();
@@ -74,6 +74,39 @@ exports.logout = function (req, res, next) {
     });
 };
 
+
+exports.confirm = function (req, res, next) {
+    let username = req.body.username;
+    console.log(username);
+
+
+    try {
+        (async () => {
+            mgclient = await MongoClient.connect(DBurl);
+            let col = mgclient.db().collection('users');
+
+            await col.find({ "_id": username }).toArray(function (err, docs) {
+
+                console.log(1);
+                assert.equal(err, null);
+                console.log(docs);
+                let docsStr = docs.join();
+                if (docsStr == "") {
+                   // var e = true;
+                    res.write('true');
+                } else {
+                    //var e = false;
+                    res.write('false');
+                }
+                res.end();
+            });
+            mgclient.close();
+            
+        })()
+    } catch (err) {
+
+    }
+};
 exports.register = function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
@@ -86,7 +119,7 @@ exports.register = function (req, res, next) {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({"_id": username}).toArray(function (err, docs) {
+            await col.find({ "_id": username }).toArray(function (err, docs) {
                 (async () => {
                     console.log(1);
                     assert.equal(err, null);
@@ -99,7 +132,7 @@ exports.register = function (req, res, next) {
                         let salt = 'njustXP2018';
                         password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
 
-                        let write = {_id: username, pwd: password, ca: cert.toString(), isValid: true};
+                        let write = { _id: username, pwd: password, ca: cert.toString(), isValid: true };
 
                         // const MongoClient = require('mongodb').MongoClient; //mongo
                         mgclient = await MongoClient.connect('mongodb://localhost:27017/myproject');
@@ -143,7 +176,7 @@ exports.changePwd = function (req, res, next) {
             let col = mgclient.db().collection('users');
             password = crypto.pbkdf2Sync(password, 'njustXP2018', 10000, 64, 'md5').toString('base64');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.updateOne({"_id": username}, {$set: {"pwd": password}}, function (err, doc) {
+            await col.updateOne({ "_id": username }, { $set: { "pwd": password } }, function (err, doc) {
                 let result = {};
                 // console.log(doc);
                 if (doc.result.ok !== 1) {
