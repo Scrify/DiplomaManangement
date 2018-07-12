@@ -92,7 +92,7 @@ exports.confirm = function (req, res, next) {
                 console.log(docs);
                 let docsStr = docs.join();
                 if (docsStr == "") {
-                   // var e = true;
+                    // var e = true;
                     res.write('true');
                 } else {
                     //var e = false;
@@ -101,7 +101,7 @@ exports.confirm = function (req, res, next) {
                 res.end();
             });
             mgclient.close();
-            
+
         })()
     } catch (err) {
 
@@ -119,41 +119,22 @@ exports.register = function (req, res, next) {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            await col.find({ "_id": username }).toArray(function (err, docs) {
-                (async () => {
-                    console.log(1);
-                    assert.equal(err, null);
-                    console.log(docs);
-                    let docsStr = docs.join();
-                    if (docsStr == "") {
-                        let cert = await register.registerUser(file, username); //cert
-                        // console.log(cert);
-                        let salt = 'njustXP2018';
-                        password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
-
-                        let write = { _id: username, pwd: password, ca: cert.toString(), isValid: true };
-
-                        // const MongoClient = require('mongodb').MongoClient; //mongo
-                        mgclient = await MongoClient.connect('mongodb://localhost:27017/myproject');
-                        let col = mgclient.db().collection('users');
-                        let r = await col.insertOne(write);
-                        const assert = require('assert');
-                        assert.equal(1, r.insertedCount);
-                        mgclient.close();
-
-                        return res.render('login', {
-                            title: 'Login',
-                            messages: '注册成功'
-                        });
-                    } else {
-                        mgclient.close();
-                        return res.render('register', {
-                            title: 'register',
-                            messages: '该用户已被注册'
-                        });
-                    }
-                })()
+            // console.log(docs);
+            let cert = await register.registerUser(file, username); //cert
+            // console.log(cert);
+            let salt = 'njustXP2018';
+            password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
+            let write = { _id: username, pwd: password, ca: cert.toString(), isValid: true };
+            // const MongoClient = require('mongodb').MongoClient; //mongo
+            let r = await col.insertOne(write);
+            const assert = require('assert');
+            assert.equal(1, r.insertedCount);
+            mgclient.close();
+            return res.render('login', {
+                title: 'Login',
+                messages: '注册成功'
             });
+
             //end
         } catch (err) {
             console.log('注册出错:', err);
