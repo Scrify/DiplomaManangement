@@ -109,12 +109,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
-                <li class="active"><a href="#"><i class="fa fa-link"></i> <span>修改密码</span></a></li>
-                <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
-                        <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
+                <li class="active"><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
               </span>
                     </a>
                     <ul class="treeview-menu">
@@ -151,6 +146,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </div>
                         <form class="form-horizontal">
                             <div class="box-body">
+                                <div class="form-group">
+                                    <label for="old_pwd" class="col-sm-3 control-label">旧密码：</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" class="form-control" id="old_pwd" name="old_pwd"/>
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label for="pwd1" class="col-sm-3 control-label">新密码：</label>
                                     <div class="col-sm-9">
@@ -202,19 +203,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
     $('#change').click(function () {
         let len = $("#pwd1").val().length;
+        let old_pwd = $("#old_pwd").val();
         let pwd1 = $("#pwd1").val();
         let pwd2 = $("#pwd2").val();
         if (len < 6) {
             alert("密码至少为6位。");
         }
-        else if (pwd1 != pwd2) {
+        else if (pwd1 !== pwd2) {
             alert("两次输入的密码不一致。");
         } else {
             $.ajax({
                 url: '/changePwd',
                 type: 'post',
                 data: {
-                    password: pwd1
+                    old_pwd: old_pwd,
+                    new_pwd: pwd1
                 },
                 success: function (data) {
                     data = eval('(' + data + ')');
