@@ -54,7 +54,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <div id="buy-div">
     <div class="register-box" id="buy-box">
         <div class="register-box-body">
-            <p class="register-box-msg">修改密码</p>
+            <p class="register-box-msg">购买虚币</p>
             <form class="form-horizontal">
                 <div class="box-body">
                     <div class="form-group">
@@ -366,7 +366,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     socket.on('to_update', function () {
         socket.emit('update', username);
     });
-    socket.on('update', function (data) {
+    socket.on('update_table', function (data) {
+        //更新我的虚币，他人虚币，两个表
         var mine_table = $('#mine_table').DataTable();
 
         var no_mine_table = $('#not_mine_table').DataTable();
@@ -422,11 +423,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 '<td id="tds">' + item['value'] + '</td>' +
                 '<td id="tds">' + item['timestamp'] + '</td>' +
                 '<td>' + '<a href=' + 'view_details?bid=' + bid + '>' +
-                '<button type="button" class="btn btn-info pull-eft">详  情</button>' +
+                '<button type="button" class="btn btn-info pull-left">详  情</button>' +
                 '</a>' +
                 //'<a href=' + 'buy?bid=' + bid + '>' +
                 // '<a href=' + 'buy?bid=' + bid + '&value=' + item['value'] + '>' +
-                '<button id="buy_coin" type="button" class="btn btn-success pull-right">购  买</button>'+
+                '<button type="button" class="btn btn-success pull-right buy_coin">购  买</button>'+
                 // '</a>' +
                 '</td></tr>'
         });
@@ -442,7 +443,37 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#not_mine_table').DataTable({
         });
 
-        $('#buy_coin').click(function () {
+        //全部交易
+        var arr3 = [];
+        for (let i in data) {
+            data[i].bid = i;
+            arr3.push(data[i]); //属性
+        }
+        //最后一交易
+        var last_tx = arr3[0];
+        for(let i in arr3) {
+        var cur_tx = arr3[i];
+        cur_tx.timestamp > last_tx.timestamp ? last_tx = cur_tx : null;
+        }
+        
+        //更新市值
+        // console.log(data);
+        // console.log(arr1);
+        // console.log(arr2);
+        // console.log(arr3);
+
+        let count = arr1.length;
+        let value = last_tx.value;
+        $('#total_value').text(count*value);
+
+        // //更新买入，卖出，利润
+        // $('#total_profit').text(data.profit);
+        // $('#total_income').text(data.income);
+        // $('#total_income').text(data.buyin);
+        // console.log(data.buyin);
+
+
+        $('.buy_coin').click(function () {
             $("#buy-div").show();
             let row = $(this).parent().parent().find("td");
             let bid = row.eq(1).text();
@@ -456,6 +487,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
         });
     });
 
+    socket.on('update_info_box',function(data){
+        $('#total_profit').text(data.profit);
+        $('#total_income').text(data.income);
+        $('#total_cost').text(data.buyin); //买入总价
+        // console.log(data);
+    });
+
+    socket.on('update_line',function(data){
+        var line = new Morris.Line({
+        element: 'line-chart', //元素id
+        resize: true,
+        data: data,
+        xkey: 'timestamp', //?string
+        ykeys: ['value'],
+        labels: ['value'],
+        lineColors: ['#3c8dbc'],
+        hideHover: 'auto'
+        });
+        // console.log(data);
+    });
+
     $('#to_buy').click(function () {
         let bid = $('#bid').val();
         let new_value = $('#new_value').val();
@@ -464,32 +516,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#buy-div').hide();
     });
 
-
-
+    //
+    // //买入总价
     // $.ajax({
     //     url: '/getIncomeAndProfit',
     //     type: 'get',
     //     data: {
     //     },
     //     success: function (data) {
-    //         data = eval('('+data+')');
-    //         $('#total_profit').text(data.profit);
-    //         $('#total_income').text(data.income);
+    //        data = eval('('+data+')');
+    //         // $('#total_profit').text(data.profit);
+    //         // $('#total_income').text(data.income);
     //         $('#total_cost').text(data.buyin); //买入总价
     //     },
     //     error: function (e) {
     //         alert("server error!");
     //     }
     // });
-    //
+
     // //更新行情
     // $.ajax({
-    //         url: '/getAllTx',
-    //         type: 'get',
-    //         data: {
-    //         },
-    //         success: function (data) {
-    //             data = eval('(' + data + ')');
+    //         //url: '/getAllTx',
+    //         //type: 'get',
+    //         //data: {
+    //         //},
+    //         //success: function (data) {
+    //         //   data = eval('(' + data + ')');
     //             //alert(data[1].value);
     //             var line = new Morris.Line({
     //                 element: 'line-chart', //元素id
@@ -505,15 +557,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
     //         error: function (e) {
     //             alert('server error!');
     //         }
-    //     });
+    //    // });
     // //更新当前市值
     // $.ajax({
-    //     url: '/getLastValue',
-    //     type: 'get',
-    //     data: {
-    //     },
-    //     success: function (data) {
-    //         data = eval('('+data+')');
+    //    // url: '/getLastValue',
+    //    // type: 'get',
+    //    // data: {
+    //    // },
+    //    // success: function (data) {
+    //    //     data = eval('('+data+')');
     //         $('#total_value').text(data.count*data.last_tx_value);
     //     },
     //     error: function (e) {
@@ -606,7 +658,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     //     error: function (e) {
     //         alert("server error!");
     //     }
-    // });
+    // //});
 </script>
 </body>
 </html>
