@@ -93,7 +93,7 @@
         });
 
         //获取username输入改变事件
-        $('#username').bind('input propertychange', function () {
+        $('#username').blur(function(){
             let username = $('#username').val();
             // alert(username);
             $.ajax({
