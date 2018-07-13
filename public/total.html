@@ -455,7 +455,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         var cur_tx = arr3[i];
         cur_tx.timestamp > last_tx.timestamp ? last_tx = cur_tx : null;
         }
-        
         //更新市值
         // console.log(data);
         // console.log(arr1);
@@ -481,7 +480,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
             $('#bid').val(bid);
             $('#value').val(value);
         });
-
         $('#cancel').click(function () {
             $("#buy-div").hide();
         });
@@ -493,7 +491,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#total_cost').text(data.buyin); //买入总价
         // console.log(data);
     });
-
     socket.on('update_line',function(data){
         var line = new Morris.Line({
         element: 'line-chart', //元素id
@@ -510,10 +507,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     $('#to_buy').click(function () {
         let bid = $('#bid').val();
+        let value=$('#value').val();
         let new_value = $('#new_value').val();
-        let cmd = 'invoke("put","'+bid+'","'+new_value+'")';
-        socket.emit('buy',username,cmd);
-        $('#buy-div').hide();
+        if(new_value==""){
+            alert("买入价格不能为空！");
+                return false;
+        }
+        else if(new_value<="0"){
+            alert("买入价格不能不高于0！")
+            return false;
+        }
+        else{
+            let cmd = 'invoke("put","'+bid+'","'+new_value+'")';
+            socket.emit('buy',username,cmd);
+            $('#new_value').val("");
+            $('#buy-div').hide();
+        }
     });
 
     //

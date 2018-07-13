@@ -20,6 +20,8 @@ module.exports = function (app) {
         
     app.route('/confirm')
         .post(api.confirm);
+    // app.route('/typerule')
+    //     .post(api.typerule);
 
     app.route('/api')
         .get(api.api);

@@ -23,17 +23,15 @@ io.sockets.on('connection', function (_socket) {
     _socket.on('to_update',function(){
         _socket.broadcast.emit('to_update');
     });
-    
     _socket.on('update', function (username) {
         console.log('socket:'+ username);
         (async () => {
             try {
                 //更新两个表和总市值
                 var fc = fc_list[username];
-                var ret = await fc.mykeys("bid01", "bid99");
+                var ret = await fc.mykeys("bid01","bid99");
                 // console.log(ret);
                 _socket.emit('update_table', ret);
-
                 //更新买入,卖出,利润
                 let mytx = await fc.mytx();
                 let profit = 0; //利润
