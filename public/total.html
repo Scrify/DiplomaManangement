@@ -363,6 +363,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
 
     let socket = io.connect('http://127.0.0.1:3001');
+    // let socket = io.connect('http://192.168.1.159:3001');
     let username = "<%=username%>";
     socket.on('connect', function () {
         socket.emit('update', username);
