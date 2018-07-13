@@ -172,7 +172,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- Optionally, you can add icons to the links -->
 
                 <!-- <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li> -->
-                <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
+              <!-- //////////// <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li> -->
+              <!-- //////////////////////////////////////////////////////////////////////////////// -->
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-link"></i> <span>Tradition</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="/tradition">买入</a></li>
+                        <li><a href="/tradition">卖出</a></li>
+                    </ul>
+                </li>
+
+
+                <!-- ////////////////////////////////////////////////////////////////////////////////////  -->
                 <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
@@ -385,6 +400,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         var html2 = '';
         var arr1 = [];
         var arr2 = [];
+
         for (let i in data) {
             data[i].bid = i;
             if (data[i].isMine === true) {
@@ -436,7 +452,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         // $('#title2').after(html2);
         $('#mine').append(html1);
         $('#mine_table').DataTable({  //文档中好像用.on事件函数
-        });
+         });
         $('#not_mine').append(html2);
         // $('#title2').after(html2);
 
@@ -484,6 +500,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         $('#cancel').click(function () {
             $("#buy-div").hide();
+   
         });
     });
 

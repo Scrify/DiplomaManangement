@@ -32,6 +32,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -212,7 +213,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </div>
                             <!-- /.box-header -->
                             <div class="box-body">
-                                <table id="mine_table" class="table table-bordered table-striped">
+                                    <table id="buy_table" class="table table-bordered table-striped">
+                                <!-- ////////////////////////////////////////// -->
+                                <!-- <table id="buy_table" class="table table-bordered table-striped"> -->
                                     <thead>
                                     <tr>
                                         <th>编号</th>
@@ -223,7 +226,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                     </tr>
                                     </thead>
-                                    <tbody id="mine">
+                                    <tbody id="buy">
                                     </tbody>
                                 </table>
                             </div>
@@ -264,86 +267,167 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="dist/js/demo.js"></script>
+
     <script>
-        $.ajax({
-            url: '/getIncomeAndProfit',
-            type: 'get',
-            data: {
-            },
-            success: function (data) {
-                data = eval('(' + data + ')');
-                $('#total_profit').text(data.profit);
-                $('#total_income').text(data.income);
-                $('#total_cost').text(data.buyin); //买入总价
-            },
-            error: function (e) {
-                alert("server error!");
-            }
-        });
-        //更新当前市值
-        $.ajax({
-            url: '/getLastValue',
-            type: 'get',
-            data: {
-            },
-            success: function (data) {
-                data = eval('(' + data + ')');
-                $('#total_value').text(data.count * data.last_tx_value);
-            },
-            error: function (e) {
-                alert("server error!");
-            }
-        });
-        $.ajax({
-        url: '/getMyTxHistory',
-        type: 'get',
-        data: {
-        },
-        success: function (data) {
-            data = eval('(' + data + ')');
+    //////////////////////////////////////////////////////////////////////////////
+//         $.ajax({
+//             url: '/getIncomeAndProfit',
+//             type: 'get',
+//             data: {
+//             },
+//             success: function (data) {
+//                 data = eval('(' + data + ')');
+//                 $('#total_profit').text(data.profit);
+//                 $('#total_income').text(data.income);
+//                 $('#total_cost').text(data.buyin); //买入总价
+//             },
+//             error: function (e) {
+//                 alert("server error!");
+//             }
+//         });
+//         //更新当前市值
+//         $.ajax({
+//             url: '/getLastValue',
+//             type: 'get',
+//             data: {
+//             },
+//             success: function (data) {
+//                 data = eval('(' + data + ')');
+//                 $('#total_value').text(data.count * data.last_tx_value);
+//             },
+//             error: function (e) {
+//                 alert("server error!");
+//             }
+//         });
+//         $.ajax({
+//         url: '/getMyTxHistory',
+//         type: 'get',
+//         data: {
+//         },
+//         success: function (data) {
+//             data = eval('(' + data + ')');
 
-            console.log(data);
-            var html1 = '';
-            for (let i in data) {
-                //data[i].bid = i;
-                console.log(i);
-                console.log(data);
-                if (data[i].isBuy === true) {
-                    data[i].isBuy = '买入';
-                }
-                else if(data[i].isBuy === false){
-                    data[i].isBuy = '卖出';
-                }
-            }
-            
-            $.each(data, function (i, item) {
+//             console.log(data);
+//             var html1 = '';
+//             for (let i in data) {
+//                 //data[i].bid = i;
+//                 console.log(i);
+//                 console.log(data);
+//                 if (data[i].isBuy === true) {
+//                     data[i].isBuy = '买入';
+//                 }
+//                 else if(data[i].isBuy === false){
+//                     data[i].isBuy = '卖出';
+//                 }
+//             }
+//        ////////////////////////////////////////////////////////////////////////////
+
+//             $.each(data, function (i, item) {
+//                 var a = i + 1;
+//                 ////////////////////////////////////////////////////////////////////////////
+//                 if(item['isBuy']=='买入'){
+//                     // arr4.push(item);
+//                     console.log(item);
+
+// // console.log(arr4);
+// // console.log(item);
+//                 //我的虚币
+//                 html1 += '<tr><td id="tds">' + a +
+//                     '<td id="tds">' + item['key'] + '</td>' +
+//                     '<td id="tds">' + item['value'] + '</td>' +
+//                     '<td id="tds">' + item['timestamp'] + '</td>' +
+//                     '<td>' + item['isBuy'] +
+//                     '</td></tr>'                }
+//             });
+            //     html1 += '<tr><td id="tds">' + a +
+            //         '<td id="tds">' + item['key'] + '</td>' +
+            //         '<td id="tds">' + item['value'] + '</td>' +
+            //         '<td id="tds">' + item['timestamp'] + '</td>' +
+            //         '<td>' + item['isBuy'] +
+            //         '</td></tr>'
+            // });
+            ////////////////////////////////////////////////////////////////////////////////
+
+    //         $('#buy').append(html1);
+    //         // $('#title2').after(html2);
+    //         $('#buy_table').dataTable({  //文档中好像用.on事件函数
+    //             "initComplete": function () {
+    //                 var api = this.api();
+    //                 api.$('#tds').click(function () {
+    //                     api.search(this.innerHTML).draw();
+    //                 });
+    //             }
+    //         });
+    //     },
+    //     error: function (e) {
+    //         alert("server error!");
+    //     }
+    // });
+//     ////////////////////////////////////////////////////////////////////////////////////////////////   
+let socket = io.connect('http://127.0.0.1:3001');
+    let username = "<%= username%>";
+    socket.on('connect', function () {
+        socket.emit('update', username);
+    });
+    // socket.on('buy', function (data) {
+    //     if (data.code === 200){
+    //         socket.emit('update', username);
+    //         // socket.broadcast.emit('update', username);
+    //     }
+    // });
+    socket.on('to_update', function () {
+        socket.emit('update', username);
+    });
+    socket.on('update_table', function (data) {
+       ////////////////////////////////////////////////////////////////////////////
+           
+    socket.on('update_buy',function(data){
+        var buy_table = $('#buy_table').DataTable();
+
+if (buy_table) {
+    buy_table.clear();    //清空数据
+    buy_table.destroy();         //销毁datatable
+}
+
+// alert(JSON.stringify(data));
+console.log(data);
+    var html1 = '';
+    for (let i in data) {
+        //data[i].bid = i;
+        console.log(i);
+        console.log(data);
+        if (data[i].isBuy === true) {
+            data[i].isBuy = '买入';
+        }
+        else if(data[i].isBuy === false){
+            data[i].isBuy = '卖出';
+        }
+    }
+console.log(data);
+$.each(data, function (i, item) {
                 var a = i + 1;
+                ////////////////////////////////////////////////////////////////////////////
+                if(item['isBuy']=='买入'){
+                    // arr4.push(item);
+                    console.log(item);
 
+// console.log(arr4);
+// console.log(item);
                 //我的虚币
                 html1 += '<tr><td id="tds">' + a +
                     '<td id="tds">' + item['key'] + '</td>' +
                     '<td id="tds">' + item['value'] + '</td>' +
                     '<td id="tds">' + item['timestamp'] + '</td>' +
                     '<td>' + item['isBuy'] +
-                    '</td></tr>'
+                    '</td></tr>'                }
             });
-
-            $('#mine').append(html1);
-            // $('#title2').after(html2);
-            $('#mine_table').dataTable({  //文档中好像用.on事件函数
-                "initComplete": function () {
-                    var api = this.api();
-                    api.$('#tds').click(function () {
-                        api.search(this.innerHTML).draw();
-                    });
-                }
-            });
-        },
-        error: function (e) {
-            alert("server error!");
-        }
+        $('#buy').append(html1);
+        $('#buy_table').DataTable({  //文档中好像用.on事件函数
+        // console.log(data);
     });
-       
+            
+         });
+    })
     </script>
 </body>
 

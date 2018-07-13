@@ -41,6 +41,54 @@ io.sockets.on('connection', function (_socket) {
                 let buyin = 0; //买入总价
                 //for (let i = 0; i < mytx.length; i++) { //每个交易
                 //    let tx = mytx[i];
+
+                //////////////////////////////////////////////////////////////////////////////
+                // let mytx = await fc.mytx();
+                //for (let i = 0; i < mytx.length; i++) { //每个交易
+                //    let tx = mytx[i];
+                for (let tx of mytx) {
+                    //let now_txid = tx['tx_id'];
+                    let now_txid = tx.tx_id;
+                    //let writeset = tx['writeset'];
+                    let writeset = tx.writeset;
+                    //console.log(now_txid);
+                    //for (let j = 0; j < writeset.length; j++) { //每一个key=bidXX
+                    //    let the_b = writeset[j];
+                    for (let the_b of writeset) {
+                        //let the_history = await eval('fc.query("history","' + the_b['key'] + '")');
+    
+                        //把买入加到返回的json数组里。
+                        the_b.timestamp = tx.timestamp;
+                        the_b.isBuy = true;
+    
+                        data.push(the_b);
+    
+                        let the_history = await fc.query("history", the_b['key']); //key历史
+                        the_history = JSON.parse(the_history);
+    
+                        //找是否卖出
+    
+                        let count = 0;
+                        for (let k = 0; k < the_history.length; k++) {
+                            //console.log(the_history[k]);
+                            //if (the_history[k]['txid'] === now_txid) {
+                            if (the_history[k].txid === now_txid) {
+                                count = k;
+                            }
+                        }
+                        if (count !== (the_history.length - 1)) {
+                            let the_sell = {};
+                            the_sell.key = the_b.key;
+                            the_sell.is_delete = the_history[count + 1].isDelete;
+                            the_sell.value = the_history[count + 1].value;
+                            the_sell.timestamp = the_history[count + 1].timestamp;
+                            the_sell.isBuy = false;
+                            data.push(the_sell);
+                        }
+    
+                    }
+                } //以上计算比较复杂，能否简化？
+                /////////////////////////////////////////////////////////////////////////////
                 for (let tx of mytx) {
                     //let now_txid = tx['tx_id'];
                     let now_txid = tx.tx_id;
@@ -74,6 +122,8 @@ io.sockets.on('connection', function (_socket) {
                         }
                     }
                 } //以上计算比较复杂，能否简化？
+
+                
                 _socket.emit('update_info_box', {
                     'income': income,
                     'profit': profit,
@@ -83,17 +133,17 @@ io.sockets.on('connection', function (_socket) {
                 let mytxall = await fc.mytxall("1");
                 let tx = [];
     
-                for (let k = 1; k < mytxall.length; k++) {
+                for (let k = 1; k < mytxall.length; k++){             
     
                     let writeset = mytxall[k].writeset;
-                    let timestamp = mytxall[k].timestamp;
+                    let timestamp = mytxall[k].timestamp;               
                     let value = writeset[0].value;
                     tx.push({
                         'timestamp': timestamp,
                         'value': value
                     });
                 }
-                _socket.emit('update_line', tx)
+                _socket.emit('update_line', tx);
             } catch (err) {
                 console.error(err);
             }

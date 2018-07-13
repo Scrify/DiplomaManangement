@@ -185,7 +185,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- /.box-header -->
                             <div class="box-body">
                                 <div class="table-responsive">
-                                    <table class="table no-margin" style="height: 300px">
+                                    <!-- ////////////////////////////////////// -->
+                                    <table id="mine_table" class="table no-margin" style="height: 300px">
+                                        <!-- ////////////////////////////////////////////////////////////// -->
                                         <thead>
                                             <tr>
                                                 <th>编号</th>
@@ -290,6 +292,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
         console.log('bid=',bid);
         //var str = '货币ID：' + bid;
         //$('#bid').append(str);
+                  ////////////////////////////////////////////////////////////////////////////////////
+                  $('#mine_table').dataTable({  //文档中好像用.on事件函数
+        });
+        //////////////////////////////////////////////////////////////////////////////////////
 
         $.ajax({
             url: '/api',
@@ -311,6 +317,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     html1 += '</tr>';
                 }
                 $('#tb').append(html1);
+ 
 
                 var line = new Morris.Line({
                     element: 'line-chart', //元素id
