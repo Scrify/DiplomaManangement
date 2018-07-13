@@ -44,14 +44,17 @@
                     <span id="useridSpan" style="display:none;color: #db0c0c;">用户已经被注册</span>
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
+                 
                 <div class="form-group has-feedback">
                     <input type="password" class="form-control" name="password" id="password" placeholder="请输入您的密码">
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
+                
                 <div class="form-group has-feedback">
                     <input type="password" class="form-control" name="retypepwd" id="retypepwd" placeholder="请确认您的密码">
                     <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
                 </div>
+                
                 <div class="row">
                     <!-- /.col -->
                     <div class="col-xs-8">
@@ -104,7 +107,6 @@
                 },
                 success: function (e) {
                     if (e == 'false') {
-
                         $("#useridSpan").show();
                        // alert("用户已经被注册");
                     } else {
@@ -117,6 +119,8 @@
 
             });
         });
+
+
 
 
         $('#register').click(function () {
@@ -132,12 +136,13 @@
                 return false;
             }
             if (len < 6) {
-                alert("密码至少为6位。");
+                $("#passwordSpan").show();
+               // alert("密码至少为6位。");
                 return false;
 
             }
             if (pwd1 != pwd2) {
-                alert("两次输入的密码不一致。");
+                $("#retypeSpan").show();
                 return false;
             }
         });

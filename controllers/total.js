@@ -28,7 +28,7 @@ io.sockets.on('connection', function (_socket) {
             }
         })();
     });
-    
+
     _socket.on('update', function (username) {
         console.log('socket:'+ username);
         (async () => {
