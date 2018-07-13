@@ -75,20 +75,17 @@ exports.logout = function (req, res, next) {
 exports.confirm = function (req, res, next) {
     let username = req.body.username;
     console.log(username);
-
-
     try {
         (async () => {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
-
             let docs = await col.find({ "_id": username }).toArray();
             let docsStr = docs.join();
             if (docsStr === "") {
                 // var e = true;
                 res.write('true');
-            } else {
-                //var e = false;
+            }
+            else {
                 res.write('false');
             }
             res.end();
@@ -96,7 +93,6 @@ exports.confirm = function (req, res, next) {
 
         })()
     } catch (err) {
-
     }
 };
 exports.register = function (req, res, next) {
@@ -362,7 +358,6 @@ exports.getIncomeAndProfit = function (req, res, next) {
                 'profit': profit,
                 'buyin': buyin
             }));
-
         } catch (err) {
             console.error(err);
             res.write('错误:' + err); //?

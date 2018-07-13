@@ -28,7 +28,7 @@ io.sockets.on('connection', function (_socket) {
             }
         })();
     });
-    
+
     _socket.on('update', function (username) {
         console.log('socket:'+ username);
         (async () => {
@@ -57,21 +57,21 @@ io.sockets.on('connection', function (_socket) {
 
                 //初始化最后一个区块编号
                 if (_socket.handshake.session.block_num === undefined){
-                    _socket.handshake.session.block_num = await fc.getLastBlockNum();
+                    _socket.handshake.session.block_num = await fc.getBlocknum();
                     _socket.handshake.session.save();
                 }
 
                 //获取当前区块编号
-                let now_block_num = await fc.getLastBlockNum();
+                let now_block_num = await fc.getBlocknum();
                 if (now_block_num > _socket.handshake.session.block_num){                  //更新缓存
 
-                    let add_tx = await fc.mytxall((_socket.handshake.session.block_num+1).toString());
+                    let add_tx = await fc.mytxall((_socket.handshake.session.block_num).toString());
 
                     for (let tx of add_tx){
                         _socket.handshake.session.txall.push(tx);
                     }
 
-                    let add_mytx = await fc.mytx((_socket.handshake.session.block_num+1).toString());
+                    let add_mytx = await fc.mytx((_socket.handshake.session.block_num).toString());
                     for (let tx of add_mytx){
                         _socket.handshake.session.user_tx_id.push(tx.tx_id);
                     }
