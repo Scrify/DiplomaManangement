@@ -363,7 +363,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
 
     let socket = io.connect('http://127.0.0.1:3001');
-    let username = "<%= username%>";
+    let username = "<%=username%>";
     socket.on('connect', function () {
         socket.emit('update', username);
     });
@@ -442,17 +442,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 // '</a>' +
                 '</td></tr>'
         });
-        // console.log(arr1);
-        /*alert("hello")*/
-        // $('#title2').after(html2);
         $('#mine').append(html1);
-        $('#mine_table').DataTable({  //文档中好像用.on事件函数
-         });
+        $('#mine_table').DataTable();  //文档中好像用.on事件函数
         $('#not_mine').append(html2);
-        // $('#title2').after(html2);
 
-        $('#not_mine_table').DataTable({
-        });
+        $('#not_mine_table').DataTable();
 
         //全部交易
         var arr3 = [];
@@ -468,21 +462,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         }
         
         //更新市值
-        // console.log(data);
-        // console.log(arr1);
-        // console.log(arr2);
-        // console.log(arr3);
 
         let count = arr1.length;
         let value = last_tx.value;
         $('#total_value').text(count*value);
 
         // //更新买入，卖出，利润
-        // $('#total_profit').text(data.profit);
-        // $('#total_income').text(data.income);
-        // $('#total_income').text(data.buyin);
-        // console.log(data.buyin);
-
 
         $('.buy_coin').click(function () {
             $("#buy-div").show();
@@ -496,7 +481,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#cancel').click(function () {
             $('#new_value').val("");
             $("#buy-div").hide();
-   
+
         });
     });
 
@@ -508,6 +493,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     });
 
     socket.on('update_line',function(data){
+        $("#line-chart").empty();
         var line = new Morris.Line({
         element: 'line-chart', //元素id
         resize: true,
