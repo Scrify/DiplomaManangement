@@ -109,14 +109,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
-                <li class="active"><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
+                <li><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-link"></i> <span>我的交易</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="/buy">买入</a></li>
+                        <li><a href="/sold_out">卖出</a></li>
+                    </ul>
+                </li>
+
+                <!-- <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
               </span>
                     </a>
                     <ul class="treeview-menu">
                         <li><a href="#">Link in level 2</a></li>
                         <li><a href="#">Link in level 2</a></li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
             <!-- /.sidebar-menu -->
         </section>
@@ -201,6 +218,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <script>
+
+    $('#cancel').click(function(){
+        $('#pwd1').val("");
+        $('#pwd2').val("");
+    });
     $('#change').click(function () {
         let len = $("#pwd1").val().length;
         let old_pwd = $("#old_pwd").val();

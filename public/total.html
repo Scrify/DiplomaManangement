@@ -170,25 +170,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
-
-                <!-- <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li> -->
-              <!-- //////////// <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li> -->
-              <!-- //////////////////////////////////////////////////////////////////////////////// -->
+                <li class="active"><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
                 <li class="treeview">
-                    <a href="#"><i class="fa fa-link"></i> <span>Tradition</span>
+                    <a href="#"><i class="fa fa-link"></i> <span>我的交易</span>
                         <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="/tradition">买入</a></li>
-                        <li><a href="/tradition">卖出</a></li>
+                        <li><a href="/buy">买入</a></li>
+                        <li><a href="/sold_out">卖出</a></li>
                     </ul>
                 </li>
 
-
-                <!-- ////////////////////////////////////////////////////////////////////////////////////  -->
-                <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+                <!-- <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
                         <span class="pull-right-container">
@@ -199,7 +194,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <li><a href="#">Link in level 2</a></li>
                         <li><a href="#">Link in level 2</a></li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
             <!-- /.sidebar-menu -->
         </section>
@@ -499,6 +494,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         });
 
         $('#cancel').click(function () {
+            $('#new_value').val("");
             $("#buy-div").hide();
    
         });
@@ -526,10 +522,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
     });
 
     $('#to_buy').click(function () {
+        if($('#new_value').val()=="" || $('#new_value').val()<=0){
+            alert("请输入大于0的买入价格！");
+            return;
+        }
         let bid = $('#bid').val();
         let new_value = $('#new_value').val();
         let cmd = 'invoke("put","'+bid+'","'+new_value+'")';
         socket.emit('buy',username,cmd);
+        $('#new_value').val("");
         $('#buy-div').hide();
     });
 

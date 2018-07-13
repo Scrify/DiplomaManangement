@@ -26,6 +26,7 @@ io.sockets.on('connection', function (_socket) {
     
     _socket.on('update', function (username) {
         console.log('socket:'+ username);
+        let data = [];
         (async () => {
             try {
                 //更新两个表和总市值
@@ -42,10 +43,8 @@ io.sockets.on('connection', function (_socket) {
                 //for (let i = 0; i < mytx.length; i++) { //每个交易
                 //    let tx = mytx[i];
 
-                //////////////////////////////////////////////////////////////////////////////
                 // let mytx = await fc.mytx();
-                //for (let i = 0; i < mytx.length; i++) { //每个交易
-                //    let tx = mytx[i];
+
                 for (let tx of mytx) {
                     //let now_txid = tx['tx_id'];
                     let now_txid = tx.tx_id;
@@ -85,10 +84,10 @@ io.sockets.on('connection', function (_socket) {
                             the_sell.isBuy = false;
                             data.push(the_sell);
                         }
-    
                     }
                 } //以上计算比较复杂，能否简化？
-                /////////////////////////////////////////////////////////////////////////////
+                _socket.emit('update_buy', data);
+
                 for (let tx of mytx) {
                     //let now_txid = tx['tx_id'];
                     let now_txid = tx.tx_id;
@@ -145,6 +144,21 @@ io.sockets.on('connection', function (_socket) {
                 }
                 _socket.emit('update_line', tx);
             } catch (err) {
+                console.error(err);
+            }
+        })();
+    });
+
+    _socket.on('update_details',function(username, bid){
+        console.log(username);
+        console.log("bid: " + bid);
+        (async () => {
+            try{
+                var fc = fc_list[username];
+                var ret = await fc.mykeyhistory(bid);
+                // console.log(ret);
+                _socket.emit('update_details', ret);
+            }catch(err){
                 console.error(err);
             }
         })();

@@ -124,12 +124,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">目 录</li>
                     <!-- Optionally, you can add icons to the links -->
-                    <li class="active">
-                        <a href="total">
-                            <i class="fa fa-link"></i>
-                            <span>主页面</span>
+                    <li><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
+                    <li class="active treeview">
+                        <a href="#"><i class="fa fa-link"></i> <span>我的交易</span>
+                            <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                  </span>
                         </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/buy">买入</a></li>
+                            <li class="active"><a href="/sold_out">卖出</a></li>
+                        </ul>
                     </li>
+    
+                    <!-- <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
+                            <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#">Link in level 2</a></li>
+                            <li><a href="#">Link in level 2</a></li>
+                        </ul>
+                    </li> -->
                 </ul>
                 <!-- /.sidebar-menu -->
             </section>
@@ -206,15 +225,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </div>
                         <!-- /.info-box -->
                     </div>
-                    <div class="col-md-12 col-xs-12">
+                    <div class="col-md-6 col-xs-12">
                         <div class="box">
                             <div class="box-header">
-                                <h3 class="box-title">我的虚币</h3>
+                                <h3 class="box-title">卖出虚币</h3>
                             </div>
                             <!-- /.box-header -->
                             <div class="box-body">
                                     <table id="buy_table" class="table table-bordered table-striped">
-                                <!-- ////////////////////////////////////////// -->
                                 <!-- <table id="buy_table" class="table table-bordered table-striped"> -->
                                     <thead>
                                     <tr>
@@ -222,7 +240,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <th>货币id</th>
                                         <th>交易价格</th>
                                         <th>交易时间</th>
-                                        <th>买/卖</th>
 
                                     </tr>
                                     </thead>
@@ -269,7 +286,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="dist/js/demo.js"></script>
 
     <script>
-    //////////////////////////////////////////////////////////////////////////////
 //         $.ajax({
 //             url: '/getIncomeAndProfit',
 //             type: 'get',
@@ -320,11 +336,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 //                     data[i].isBuy = '卖出';
 //                 }
 //             }
-//        ////////////////////////////////////////////////////////////////////////////
 
 //             $.each(data, function (i, item) {
 //                 var a = i + 1;
-//                 ////////////////////////////////////////////////////////////////////////////
 //                 if(item['isBuy']=='买入'){
 //                     // arr4.push(item);
 //                     console.log(item);
@@ -346,7 +360,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
             //         '<td>' + item['isBuy'] +
             //         '</td></tr>'
             // });
-            ////////////////////////////////////////////////////////////////////////////////
 
     //         $('#buy').append(html1);
     //         // $('#title2').after(html2);
@@ -363,7 +376,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     //         alert("server error!");
     //     }
     // });
-//     ////////////////////////////////////////////////////////////////////////////////////////////////   
 let socket = io.connect('http://127.0.0.1:3001');
     let username = "<%= username%>";
     socket.on('connect', function () {
@@ -378,13 +390,17 @@ let socket = io.connect('http://127.0.0.1:3001');
     socket.on('to_update', function () {
         socket.emit('update', username);
     });
-    socket.on('update_table', function (data) {
-       ////////////////////////////////////////////////////////////////////////////
-           
+    // socket.on('update_table', function (data) {
+    socket.on('update_info_box',function(data){
+        $('#total_profit').text(data.profit);
+        $('#total_income').text(data.income);
+        $('#total_cost').text(data.buyin); //买入总价
+        // console.log(data);
+    });      
     socket.on('update_buy',function(data){
         var buy_table = $('#buy_table').DataTable();
 
-if (buy_table) {
+    if (buy_table) {
     buy_table.clear();    //清空数据
     buy_table.destroy();         //销毁datatable
 }
@@ -404,10 +420,11 @@ console.log(data);
         }
     }
 console.log(data);
+        var a =  0;
 $.each(data, function (i, item) {
-                var a = i + 1;
-                ////////////////////////////////////////////////////////////////////////////
-                if(item['isBuy']=='买入'){
+                if(item['isBuy']=='卖出'){
+                a++;
+
                     // arr4.push(item);
                     console.log(item);
 
@@ -417,17 +434,49 @@ $.each(data, function (i, item) {
                 html1 += '<tr><td id="tds">' + a +
                     '<td id="tds">' + item['key'] + '</td>' +
                     '<td id="tds">' + item['value'] + '</td>' +
-                    '<td id="tds">' + item['timestamp'] + '</td>' +
-                    '<td>' + item['isBuy'] +
-                    '</td></tr>'                }
+                    '<td id="tds">' + item['timestamp'] + '</td>'+
+                    '</tr>'                }
             });
         $('#buy').append(html1);
         $('#buy_table').DataTable({  //文档中好像用.on事件函数
         // console.log(data);
     });
             
-         });
-    })
+    });
+         socket.on('update_table', function (data) {
+        var arr1 = [];
+
+        for (let i in data) {
+            data[i].bid = i;
+            if (data[i].isMine === true) {
+                arr1.push(data[i]); //属性
+            }
+            //arr.push(obj[i]); //值
+        }
+ 
+
+        //全部交易
+        var arr3 = [];
+        for (let i in data) {
+            data[i].bid = i;
+            arr3.push(data[i]); //属性
+        }
+        //最后一交易
+        var last_tx = arr3[0];
+        for(let i in arr3) {
+        var cur_tx = arr3[i];
+        cur_tx.timestamp > last_tx.timestamp ? last_tx = cur_tx : null;
+        }
+        
+        //更新市值
+
+        let count = arr1.length;
+        let value = last_tx.value;
+        $('#total_value').text(count*value);
+
+    });
+
+    // })
     </script>
 </body>
 
