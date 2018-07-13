@@ -95,47 +95,6 @@ exports.confirm = function (req, res, next) {
     } catch (err) {
     }
 };
-// exports.typerule = function (req, res, next){
-//     let pwd = req.body.password
-//     let len =pwd.length
-//     try {
-//         (async () => {
-//             if (len>6) {
-//                 // var e = true;
-//                 res.write('true');
-//             } else {
-//                 //var e = false;
-//                 res.write('false');
-//             }
-//             res.end();
-//             mgclient.close();
-//         })()
-//     } catch (err) {
-//     }
-// }
-// exports.buycoin = function (req, res, next){
-//     var username = req.session.username;
-//     if (username === null) {
-//         return res.render('login', {
-//             title: 'Login',
-//             messages: '请先登录!'
-//         });
-//     }
-//     (async () => {
-//         try {
-//             if (value=="") {
-//                 // var e = true;
-//                 res.write('false');
-//             } else {
-//                 //var e = false;
-//                 res.write('true');
-//             }
-//             res.end();
-//             mgclient.close();
-//         });
-//     } catch (err) {
-//     }
-// }
 exports.register = function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
