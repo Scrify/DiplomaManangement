@@ -170,10 +170,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">目 录</li>
                 <!-- Optionally, you can add icons to the links -->
+                <li class="active"><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-link"></i> <span>我的交易</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="/buy">买入</a></li>
+                        <li><a href="/sold_out">卖出</a></li>
+                    </ul>
+                </li>
 
-                <!-- <li class="active"><a href="/changePwd"><i class="fa fa-link"></i> <span>修改密码</span></a></li> -->
-                <li class="active"><a href="/tradition"><i class="fa fa-link"></i> <span>Tradition</span></a></li>
-                <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+                <!-- <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
                         <span class="pull-right-container">
@@ -184,7 +194,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <li><a href="#">Link in level 2</a></li>
                         <li><a href="#">Link in level 2</a></li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
             <!-- /.sidebar-menu -->
         </section>
@@ -353,7 +363,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
 
     let socket = io.connect('http://127.0.0.1:3001');
-    let username = "<%= username%>";
+    let username = "<%=username%>";
     socket.on('connect', function () {
         socket.emit('update', username);
     });
@@ -385,6 +395,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         var html2 = '';
         var arr1 = [];
         var arr2 = [];
+
         for (let i in data) {
             data[i].bid = i;
             if (data[i].isMine === true) {
@@ -431,17 +442,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 // '</a>' +
                 '</td></tr>'
         });
-        // console.log(arr1);
-        /*alert("hello")*/
-        // $('#title2').after(html2);
         $('#mine').append(html1);
-        $('#mine_table').DataTable({  //文档中好像用.on事件函数
-        });
+        $('#mine_table').DataTable();  //文档中好像用.on事件函数
         $('#not_mine').append(html2);
-        // $('#title2').after(html2);
 
-        $('#not_mine_table').DataTable({
-        });
+        $('#not_mine_table').DataTable();
 
         //全部交易
         var arr3 = [];
@@ -455,22 +460,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
         var cur_tx = arr3[i];
         cur_tx.timestamp > last_tx.timestamp ? last_tx = cur_tx : null;
         }
+        
         //更新市值
-        // console.log(data);
-        // console.log(arr1);
-        // console.log(arr2);
-        // console.log(arr3);
 
         let count = arr1.length;
         let value = last_tx.value;
         $('#total_value').text(count*value);
 
         // //更新买入，卖出，利润
-        // $('#total_profit').text(data.profit);
-        // $('#total_income').text(data.income);
-        // $('#total_income').text(data.buyin);
-        // console.log(data.buyin);
-
 
         $('.buy_coin').click(function () {
             $("#buy-div").show();
@@ -480,8 +477,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
             $('#bid').val(bid);
             $('#value').val(value);
         });
+
         $('#cancel').click(function () {
+            $('#new_value').val("");
             $("#buy-div").hide();
+
         });
     });
 
@@ -491,7 +491,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#total_cost').text(data.buyin); //买入总价
         // console.log(data);
     });
+
     socket.on('update_line',function(data){
+        $("#line-chart").empty();
         var line = new Morris.Line({
         element: 'line-chart', //元素id
         resize: true,
@@ -506,6 +508,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     });
 
     $('#to_buy').click(function () {
+        if($('#new_value').val()=="" || $('#new_value').val()<=0){
+            alert("请输入大于0的买入价格！");
+            return;
+        }
         let bid = $('#bid').val();
         let value=$('#value').val();
         let new_value = $('#new_value').val();

@@ -23,7 +23,7 @@ module.exports = function (app) {
     app.route('/view_details')
         .get(renderPage.renderViewDetails);
 
-    app.route('/tradition')
-        .get(renderPage.renderTradition);
+    app.route('/sold_out')
+        .get(renderPage.renderSold_out);
 
 };

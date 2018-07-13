@@ -102,8 +102,8 @@ exports.renderViewDetails = function (req, res, next) {
     }
 };
 
-//查看迈入和卖出记录
-exports.renderTradition = function (req, res, next) {
+//查看买入和卖出记录
+exports.renderSold_out = function (req, res, next) {
     // console.log('1');
     if (!req.session.username) {
         res.render('login', {
@@ -112,8 +112,8 @@ exports.renderTradition = function (req, res, next) {
         });
     } else {
         // console.log('total');
-        res.render('tradition', {
-            title: 'Tradition',
+        res.render('sold_out', {
+            title: 'sold_out',
             username: req.session.username
         });
     }
