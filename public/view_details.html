@@ -122,35 +122,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">目 录</li>
                     <!-- Optionally, you can add icons to the links -->
-                    <li class="active">
-                        <a href="#">
-                            <i class="fa fa-link"></i>
-                            <span>Link</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-link"></i>
-                            <span>Another Link</span>
-                        </a>
-                    </li>
+                    <li><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
                     <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-link"></i>
-                            <span>Multilevel</span>
+                        <a href="#"><i class="fa fa-link"></i> <span>我的交易</span>
                             <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                  </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li>
-                                <a href="#">Link in level 2</a>
-                            </li>
-                            <li>
-                                <a href="#">Link in level 2</a>
-                            </li>
+                            <li><a href="/buy">买入</a></li>
+                            <li><a href="/sold_out">卖出</a></li>
                         </ul>
                     </li>
+    
+                    <!-- <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
+                            <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="#">Link in level 2</a></li>
+                            <li><a href="#">Link in level 2</a></li>
+                        </ul>
+                    </li> -->
                 </ul>
                 <!-- /.sidebar-menu -->
             </section>
@@ -185,7 +181,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <!-- /.box-header -->
                             <div class="box-body">
                                 <div class="table-responsive">
-                                    <table class="table no-margin" style="height: 300px">
+                                    <table id="bid_table" class="table no-margin">
                                         <thead>
                                             <tr>
                                                 <th>编号</th>
@@ -196,6 +192,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                             </tr>
                                         </thead>
                                         <tbody id="tb">
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -271,6 +268,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="dist/js/demo.js"></script>
+    <!-- socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         /*
                 var url = location.search; //获取url中"?"符后的字串
@@ -287,47 +286,102 @@ scratch. This page gets rid of all links and provides the needed markup only.
         let bidstr = $('#bid').text(); //读取，结果应为'货币ID:bid03'
         let startpos = bidstr.indexOf("bid");
         let bid = bidstr.substr(startpos, 5);
+        var username = '<%= username%>';
         console.log('bid=',bid);
+        let socket = io.connect('http://127.0.0.1:3001');
+        socket.on('connect', function () {
+            socket.emit('update_details', username,bid);
+        });
+        socket.on('to_update', function () {
+            socket.emit('update_details', username, bid);
+        });
+        socket.on('update_details',function(data){
+            var bid_table = $('#bid_table').DataTable();
+            if (bid_table) {
+                bid_table.clear();    //清空数据
+                bid_table.destroy();         //销毁datatable
+            }
+            let html1 = '';
+            for (let i = 0; i < data.length; i++) {
+                var a = i + 1;
+                html1 += '<tr><td id="tds">' + a +
+                    '<td id="tds">' + data[i].timestamp + '</td>' +
+                    '<td id="tds">' + data[i].value + '</td>';
+                if (data[i].isMine === true) {
+                    html1 += '<td><i class="fa fa-fw fa-balance-scale"></i></td>';
+                }else{
+                    html1 += '<td></td>';
+                }
+                html1 += '</tr>';
+            }
+            $('#tb').append(html1);
+            $('#bid_table').DataTable({
+                    // "initComplete": function () {
+                    //     var api = this.api();
+                    //     api.$('#tds').click(function () {
+                    //         api.search(this.innerHTML).draw();
+                    //     });
+                    // }
+            });
+            var line = new Morris.Line({
+                element: 'line-chart', //元素id
+                resize: true,
+                data: data,
+                xkey: 'timestamp', //?string
+                ykeys: ['value'],
+                labels: ['value'],
+                lineColors: ['#3c8dbc'],
+                hideHover: 'auto'
+            });
+        })
         //var str = '货币ID：' + bid;
         //$('#bid').append(str);
-
-        $.ajax({
-            url: '/api',
-            type: 'get',
-            data: {
-                cmd: 'mykeyhistory("' + bid + '")'
-            },
-            success: function (data) {
-                data = eval('(' + data + ')');
-                let html1 = '';
-                for (let i = 0; i < data.length; i++) {
-                    var a = i + 1;
-                    html1 += '<tr><td id="tds">' + a +
-                        '<td id="tds">' + data[i].timestamp + '</td>' +
-                        '<td id="tds">' + data[i].value + '</td>';
-                    if (data[i].isMine === true) {
-                        html1 += '<td><i class="fa fa-fw fa-balance-scale"></i></td>';
-                    }
-                    html1 += '</tr>';
-                }
-                $('#tb').append(html1);
-
-                var line = new Morris.Line({
-                    element: 'line-chart', //元素id
-                    resize: true,
-                    data: data,
-                    xkey: 'timestamp', //?string
-                    ykeys: ['value'],
-                    labels: ['value'],
-                    lineColors: ['#3c8dbc'],
-                    hideHover: 'auto'
-                });
-            },
-            error: function (e) {
-                alert('server error!');
-            }
-        });
-    </script>
+        // $.ajax({
+        //     url: '/api',
+        //     type: 'get',
+        //     data: {
+                // cmd: 'mykeyhistory("' + bid + '")'
+        //     },
+        //     success: function (data) {
+        //         data = eval('(' + data + ')');
+        //         let html1 = '';
+        //         for (let i = 0; i < data.length; i++) {
+        //             var a = i + 1;
+        //             html1 += '<tr><td id="tds">' + a +
+        //                 '<td id="tds">' + data[i].timestamp + '</td>' +
+        //                 '<td id="tds">' + data[i].value + '</td>';
+        //             if (data[i].isMine === true) {
+        //                 html1 += '<td><i class="fa fa-fw fa-balance-scale"></i></td>';
+        //             }else{
+        //                 html1 += '<td></td>';
+        //             }
+        //             html1 += '</tr>';
+        //         }
+        //         $('#tb').append(html1);
+        //         $('#bid_table').DataTable({
+        //             // "initComplete": function () {
+        //             //     var api = this.api();
+        //             //     api.$('#tds').click(function () {
+        //             //         api.search(this.innerHTML).draw();
+        //             //     });
+        //             // }
+        //         });
+        //         var line = new Morris.Line({
+        //             element: 'line-chart', //元素id
+        //             resize: true,
+        //             data: data,
+        //             xkey: 'timestamp', //?string
+        //             ykeys: ['value'],
+        //             labels: ['value'],
+        //             lineColors: ['#3c8dbc'],
+        //             hideHover: 'auto'
+        //         });
+        //     },
+        //     error: function (e) {
+        //         alert('server error!');
+        //     }
+        // });
+</script>
 </body>
 
 </html>

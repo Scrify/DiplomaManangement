@@ -161,6 +161,21 @@ io.sockets.on('connection', function (_socket) {
             }
         })();
     });
+
+    _socket.on('update_details',function(username, bid){
+        console.log(username);
+        console.log("bid: " + bid);
+        (async () => {
+            try{
+                var fc = fc_list[username];
+                var ret = await fc.mykeyhistory(bid);
+                // console.log(ret);
+                _socket.emit('update_details', ret);
+            }catch(err){
+                console.error(err);
+            }
+        })();
+    });
 });
 
 exports.listen = function (_server) {
