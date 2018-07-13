@@ -24,6 +24,7 @@ exports.login = function (req, res, next) {
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
             let docs = await col.find({ "_id": username }).toArray();
+            mgclient.close();
             let docsStr = docs.join();
             if (docsStr === "") {
                 //throw new Error('用户不存在');
@@ -48,7 +49,6 @@ exports.login = function (req, res, next) {
                     });
                 }
             }
-            mgclient.close();
         } catch (err) {
             console.log('连接出错：', err);
             if (err) {
