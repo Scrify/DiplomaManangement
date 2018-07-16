@@ -14,6 +14,7 @@ global.txall = [];
 global.user_tx_id = {};
 global.historys = {};
 global.block_num = 0;
+global.time = 0;
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
