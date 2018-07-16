@@ -12,7 +12,6 @@ var crypto = require('crypto');
 
 var MongoClient = require("mongodb").MongoClient;
 var DBurl = 'mongodb://localhost:27017/myproject';
-const assert = require('assert');
 var mgclient = null;
 
 exports.login = function (req, res, next) {
@@ -64,6 +63,7 @@ exports.login = function (req, res, next) {
 exports.logout = function (req, res, next) {
     let username = req.session.username;
     delete fc_list[username];
+    delete user_tx_id[username];
     req.session.destroy();
     return res.render('login', {
         title: 'Login',
@@ -387,8 +387,8 @@ exports.api = function (req, res, next) {
                 res.write('提交交易成功！');
             } else {
                 var ret = await eval(cmd);
+                console.log(ret);
                 if (ret !== undefined) {
-                    // console.log(ret);
                     res.write(JSON.stringify(ret))
                     // res.write(ret)
                 }
@@ -437,4 +437,19 @@ exports.getAllTx = function (req, res, next) {
         res.end();
     })();
 
+};
+
+exports.global_var = function (req, res) {
+    (async () => {
+        try {
+            cmd = req.query.cmd;
+            var ret = await eval(cmd);
+            res.write(JSON.stringify(ret))
+        } catch (err) {
+            console.error(err);
+            res.write('错误:' + err); //?
+            //res.end(err.stringify()) //输出?
+        }
+        res.end();
+    })();
 };

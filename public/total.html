@@ -48,43 +48,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
             position: relative;
             left:0;
         }
+        #progress_div{
+            z-index: 99999;
+            background-color: rgba(0,0,0,0.5);
+            position: fixed;
+            margin:auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+        }
+        #bar_box{
+            position: relative;
+            left:0;
+        }
     </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div id="buy-div">
-    <div class="register-box" id="buy-box">
-        <div class="register-box-body">
-            <p class="register-box-msg">购买虚币</p>
-            <form class="form-horizontal">
-                <div class="box-body">
-                    <div class="form-group">
-                        <label for="bid" class="col-sm-6 control-label">货币ID：</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="bid" disabled="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="value" class="col-sm-6 control-label">当时价格：</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="value" disabled="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="new_value" class="col-sm-6 control-label">买入价格：</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="new_value">
-                        </div>
-                    </div>
-                </div>
 
-                <div class="box-footer">
-                    <button type="button" id="cancel" class="btn btn-default">取消</button>
-                    <button type="button" id="to_buy" class="btn btn-info pull-right">购买</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <div class="wrapper">
 
@@ -217,6 +199,54 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <section class="content">
             <div class="row">
+                <div id="progress_div">
+                    <div class="register-box" id="bar_box">
+                        <div class="register-box-body">
+                            <div class="box-body">
+                                <p>数据加载中，请稍后...<p id="progress_text"></p></p>
+                                <div class="progress active">
+                                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="buy-div">
+                    <div class="register-box" id="buy-box">
+                        <div class="register-box-body">
+                            <p class="register-box-msg">购买虚币</p>
+                            <form class="form-horizontal">
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <label for="bid" class="col-sm-6 control-label">货币ID：</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="bid" disabled="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="value" class="col-sm-6 control-label">当时价格：</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="value" disabled="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_value" class="col-sm-6 control-label">买入价格：</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="new_value">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box-footer">
+                                    <button type="button" id="cancel" class="btn btn-default">取消</button>
+                                    <button type="button" id="to_buy" class="btn btn-info pull-right">购买</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-3">
                     <div class="info-box">
                         <span class="info-box-icon bg-green"><i class="fa fa-cny"></i></span>
@@ -361,12 +391,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="bower_components/morris.js/morris.min.js"></script>
 <script src="dist/js/demo.js"></script>
 <script>
-
+    $('#progress_div').hide();
     let socket = io.connect('http://127.0.0.1:3001');
     // let socket = io.connect('http://192.168.1.159:3001');
     let username = "<%=username%>";
     socket.on('connect', function () {
         socket.emit('update', username);
+        // socket.emit('progress', 1);
     });
     socket.on('buy', function (data) {
         if (data.code === 200){
@@ -377,6 +408,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
     socket.on('to_update', function () {
         socket.emit('update', username);
     });
+
+    socket.on('progress', function (data) {
+        let line = $("#line-chart").text();
+        $('#progress_div').show();
+        if (data.percent < 100 && /^\s*?$/.test(line)){
+            socket.emit('progress', data.bnum);
+        }else if (/^\s*?$/.test(line)) {
+            data.percent = 99;
+            socket.emit('progress', data.bnum);
+        }else {
+            data.percent = 100;
+            $('#progress_div').hide();
+        }
+        $('#progress_text').text(data.percent+'%/100%');
+        $('.progress-bar').css("width",data.percent+'%');
+    });
+
     socket.on('update_table', function (data) {
         //更新我的虚币，他人虚币，两个表
         var mine_table = $('#mine_table').DataTable();

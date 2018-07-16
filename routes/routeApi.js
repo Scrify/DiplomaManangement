@@ -37,4 +37,7 @@ module.exports = function (app) {
         
     app.route('/getAllTx')
         .get(api.getAllTx);
+
+    app.route('/getVar')
+        .get(api.global_var);
 };
