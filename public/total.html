@@ -412,17 +412,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     socket.on('progress', function (data) {
         let line = $("#line-chart").text();
         $('#progress_div').show();
-        if (data.percent < 100 && /^\s*?$/.test(line)){
+        if (/^\s*?$/.test(line)){
             socket.emit('progress', data.bnum);
-        }else if (/^\s*?$/.test(line)) {
-            data.percent = 99;
-            socket.emit('progress', data.bnum);
+        }else if (data.percent < 99) {
+            socket.emit('progress', data.total_num*99/100);
         }else {
-            data.percent = 100;
-            $('#progress_div').hide();
+            socket.emit('progress', data.total_num-1);
         }
         $('#progress_text').text(data.percent+'%/100%');
         $('.progress-bar').css("width",data.percent+'%');
+        if (data.percent === 100){
+            $('#progress_div').hide();
+        }
     });
 
     socket.on('update_table', function (data) {

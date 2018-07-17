@@ -34,7 +34,8 @@ io.sockets.on('connection', function (_socket) {
             let progress = {
                 name: 'progress',
                 bnum: old_bnum+1,
-                percent: Math.floor((old_bnum+1)/block_num * 100)
+                percent: Math.floor((old_bnum+1)/block_num * 100),
+                total_num: block_num
             };
             _socket.emit('progress', progress);
         }, time/(block_num*2));
@@ -87,6 +88,7 @@ io.sockets.on('connection', function (_socket) {
                 let profit = 0; //利润
                 let income = 0; //卖出总价
                 let buyin = 0; //买入总价
+                let data = []; //卖出的交易
 
                 for (let mytx_id of user_tx_id[username]) {           //遍历当前用户的所有tx_id
                     let my_tx = {};              //比对到的交易信息
@@ -128,7 +130,11 @@ io.sockets.on('connection', function (_socket) {
                         the_tx_value = Number(the_history[count].value); //买入价格
                         buyin += the_tx_value;
                         if (count !== (the_history.length - 1)) { //买入交易是否为最后交易
-                            now_value = Number(the_history[count + 1].value); //若不是，下一个交易就是卖出，取卖出价格
+                            let sold_out = the_history[count + 1];
+                            now_value = Number(sold_out.value); //若不是，下一个交易就是卖出，取卖出价格
+                            sold_out.isBuy = false;
+                            sold_out.key = the_b.key;
+                            data.push(sold_out);
                             income += now_value;
                             profit += (now_value - the_tx_value);
                         }
@@ -143,6 +149,7 @@ io.sockets.on('connection', function (_socket) {
                     'profit': profit,
                     'buyin': buyin
                 });
+                _socket.emit('update_sold_out', data);
 
                 let market = [];   //行情数据
                 for (let tx of txall) {
@@ -167,7 +174,21 @@ io.sockets.on('connection', function (_socket) {
         console.log("bid: " + bid);
         (async () => {
             try{
-                var fc = fc_list[username];
+
+                let fc = fc_list[username];
+                let now_block_num = await fc.getBlocknum();
+
+                if (historys === undefined ||
+                    historys[bid] === undefined ||
+                    now_block_num > block_num){
+
+                    //更新货币历史
+                    let the_history = await fc.query("history", bid); //key历史
+                    the_history = JSON.parse(the_history);
+                    historys[the_b['key']]= the_history;
+                }
+
+
                 var ret = await fc.mykeyhistory(bid);
                 // console.log(ret);
                 _socket.emit('update_details', ret);
