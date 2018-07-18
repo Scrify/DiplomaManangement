@@ -2,43 +2,41 @@
  * Created by coofly on 2014/7/12.
  */
 var io = require('socket.io')();
-
+var app = require('../app');
 io.sockets.on('connection', function (_socket) {
+
+    let event = app.get('event');
+
+    event.on('getNewBlock', function () {
+        _socket.emit('to_update')
+    });
+
     _socket.on('buy', function (username, cmd) {
         let fc = fc_list[username];
         (async()=>{
             try {
                 cmd = 'fc.'+cmd;
-                let ret = await eval(cmd);
+                let ret = eval(cmd);
                 _socket.emit('buy', {
                     code: 200,
-                    message: '购买成功！'
+                    message: '提交交易成功！'
                 });
-                let t1 = new Date().getTime();
-                let add_txall = await fc_list['admin'].mytxall(block_num.toString());
-                let t2 = new Date().getTime();
-                time += t2-t1;
-                for (let add_tx of add_txall){
-                    txall.push(add_tx)
-                }
-
-                _socket.broadcast.emit('to_update');
             }catch (e) {
                 console.log(e);
             }
         })();
     });
 
-    _socket.on('progress', function (old_bnum) {
+    _socket.on('progress', function (old_bnum, username) {
         setTimeout(function() {
             let progress = {
                 name: 'progress',
-                bnum: old_bnum+1,
-                percent: Math.floor((old_bnum+1)/block_num * 100),
-                total_num: block_num
+                bnum: old_bnum<block_num[username]?old_bnum+1:old_bnum,
+                percent: old_bnum<block_num[username]?Math.floor((old_bnum+1)/block_num[username] * 100):99.99,
+                total_num: block_num[username]
             };
             _socket.emit('progress', progress);
-        }, time/(block_num*2));
+        }, time/(block_num[username]*2));
     });
 
     _socket.on('update', function (username) {
@@ -56,8 +54,8 @@ io.sockets.on('connection', function (_socket) {
                         bnum:1,
                         percent: 1
                     };
+                    block_num[username] = await fc.getBlocknum();
                     _socket.emit('progress', progress);
-
                     let mytx = await fc.mytx("2");
                     let mytx_id = [];
                     for (let tx of mytx){
@@ -65,14 +63,10 @@ io.sockets.on('connection', function (_socket) {
                     }
                     user_tx_id[username] = mytx_id;
                 }
-
-                //获取当前区块个数
-                let now_block_num = await fc.getBlocknum();
-
                 //当前区块个数大于缓存中区块号则更新用户个人交易
-                if (now_block_num > block_num){
+                if (block_num[username] < block_num['admin']){
                     let t1 = new Date().getTime();
-                    let add_mytx = await fc.mytx(block_num.toString());
+                    let add_mytx = await fc.mytx(block_num[username].toString());
                     let t2 = new Date().getTime();
                     time += t2-t1;
                     for (let tx of add_mytx){
@@ -107,7 +101,7 @@ io.sockets.on('connection', function (_socket) {
 
                         if (historys === undefined ||
                             historys[the_b['key']] === undefined ||
-                            now_block_num > block_num){
+                            block_num[username] < block_num['admin']){
 
                             //更新货币历史
                             let the_history = await fc.query("history", the_b['key']); //key历史
@@ -141,7 +135,7 @@ io.sockets.on('connection', function (_socket) {
                     }
 
                     // 更新区块数量
-                    block_num = now_block_num;
+                    block_num[username] = block_num['admin'];
 
                 } //以上计算比较复杂，能否简化？
                 _socket.emit('update_info_box', {
@@ -152,15 +146,19 @@ io.sockets.on('connection', function (_socket) {
                 _socket.emit('update_sold_out', data);
 
                 let market = [];   //行情数据
-                for (let tx of txall) {
+                let total_tx_num = txall.length;
+                for (let i in txall) {
                     // console.log(tx);
-                    let write_set = tx.writeset;
-                    let timestamp = tx.timestamp;
+                    let write_set = txall[total_tx_num-i-1].writeset;
+                    let timestamp = txall[total_tx_num-i-1].timestamp;
                     let value = write_set[0].value;
                     market.push({
                         'timestamp': timestamp,
                         'value': value
                     });
+                    if (market.length > 30){
+                        break;
+                    }
                 }
                 _socket.emit('update_line', market);
             } catch (err) {
@@ -176,20 +174,29 @@ io.sockets.on('connection', function (_socket) {
             try{
 
                 let fc = fc_list[username];
-                let now_block_num = await fc.getBlocknum();
 
                 if (historys === undefined ||
                     historys[bid] === undefined ||
-                    now_block_num > block_num){
+                    block_num[username] < block_num['admin']){
 
                     //更新货币历史
-                    let the_history = await fc.query("history", bid); //key历史
-                    the_history = JSON.parse(the_history);
-                    historys[the_b['key']]= the_history;
+                    let the_b_history = await fc.query("history", bid); //key历史
+                    the_b_history = JSON.parse(the_b_history);
+                    historys[bid]= the_b_history;
                 }
 
 
-                var ret = await fc.mykeyhistory(bid);
+                let the_b_history = historys[bid];
+                let ret = [];
+                console.log(typeof user_tx_id[username]);
+                for (let the_history of the_b_history){
+                    if (user_tx_id[username].indexOf(the_history.txid) !== -1){
+                        the_history.isMine = true;
+                    }else{
+                        the_history.isMine = false;
+                    }
+                    ret.push(the_history);
+                }
                 // console.log(ret);
                 _socket.emit('update_details', ret);
             }catch(err){

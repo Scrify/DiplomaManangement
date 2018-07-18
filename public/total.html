@@ -391,7 +391,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="bower_components/morris.js/morris.min.js"></script>
 <script src="dist/js/demo.js"></script>
 <script>
-    $('#progress_div').hide();
+    // $('#progress_div').hide();
     let socket = io.connect('http://127.0.0.1:3001');
     // let socket = io.connect('http://192.168.1.159:3001');
     let username = "<%=username%>";
@@ -406,22 +406,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
         }
     });
     socket.on('to_update', function () {
+        console.log('接到更新请求');
         socket.emit('update', username);
     });
 
     socket.on('progress', function (data) {
         let line = $("#line-chart").text();
+        console.log(data.percent, ' ', data.bnum, ' ', data.total_num);
         $('#progress_div').show();
         if (/^\s*?$/.test(line)){
-            socket.emit('progress', data.bnum);
-        }else if (data.percent < 99) {
-            socket.emit('progress', data.total_num*99/100);
+            socket.emit('progress', data.bnum, username);
         }else {
-            socket.emit('progress', data.total_num-1);
+            socket.emit('progress', data.total_num-1, username);
         }
         $('#progress_text').text(data.percent+'%/100%');
         $('.progress-bar').css("width",data.percent+'%');
-        if (data.percent === 100){
+        if (data.percent >= 100){
             $('#progress_div').hide();
         }
     });

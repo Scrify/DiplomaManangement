@@ -305,13 +305,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             },
             success: function (data) {
                 data = eval('(' + data + ')');
-
-                console.log(data);
                 var html1 = '';
                 for (let i in data) {
                     //data[i].bid = i;
-                    console.log(i);
-                    console.log(data);
                     if (data[i].isBuy === true) {
                         data[i].isBuy = '买入';
                     }
@@ -325,12 +321,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                     if (item['isBuy'] == '买入') {
                         a++;
-                        // arr4.push(item);
-                        console.log(item);
-
-                        // console.log(arr4);
-                        // console.log(item);
-                        //我的虚币
                         html1 += '<tr><td id="tds">' + a +
                             '<td id="tds">' + item['key'] + '</td>' +
                             '<td id="tds">' + item['value'] + '</td>' +
