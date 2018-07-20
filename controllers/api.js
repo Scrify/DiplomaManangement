@@ -41,6 +41,8 @@ exports.login = function (req, res, next) {
                         let fc = await FConn.FConnect(username);
                         fc_list[username] = fc;
                         return res.redirect('total');
+                        // return res.redirect('excel');
+
                     })()
                 } else {
                     return res.render('login', {
@@ -402,6 +404,7 @@ exports.api = function (req, res, next) {
     })();
 };
 
+
 exports.getAllTx = function (req, res, next) {
     var username = req.session.username;
     console.log("username=" + username);
@@ -437,4 +440,54 @@ exports.getAllTx = function (req, res, next) {
         res.end();
     })();
 
+};
+
+exports.remove = function (req, res, next) {
+    var username = req.session.username;
+    console.log("username=" + username);
+    if (username === null) {
+        return res.render('login', {
+            title: 'Login',
+            messages: '请先登录!'
+        });
+    }
+    (async () => {
+        try {
+            let fc = fc_list[username];
+            let key = req.query.key;
+            let txtype = req.query.txtype;
+            let reason = req.query.reason;
+            let curtx = await fc.query("get",key);
+            if(!curtx){
+                res.write('无此证书！');                
+            }else{
+                curtx = eval('(' + curtx + ')');
+                
+                let result = {
+                    'num': curtx.num,
+                    'txtpye': txtype,
+                    'schoolsystem': curtx.schoolsystem,
+                    'school': curtx.school,
+                    'certdate': curtx.certdate,
+                    'name': curtx.name,
+                    'sex': curtx.sex,
+                    'birthday': curtx.birthday,
+                    'begin': curtx.begin,
+                    'end': curtx.end,
+                    'major': curtx.major,
+                    'status': "撤销",
+                    'reason': reason,
+                    'degree': curtx.degree
+                }
+                // console.log(result);
+                    
+                fc.invoke("put",key,JSON.stringify(result));
+                res.write('撤销成功！');
+            }
+        } catch (err) {
+            console.error(err);
+            res.write('错误:' + err);
+        }
+        res.end();
+    })();
 };

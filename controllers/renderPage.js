@@ -102,8 +102,25 @@ exports.renderViewDetails = function (req, res, next) {
     }
 };
 
-//查看买入和卖出记录
-exports.renderSold_out = function (req, res, next) {
+//撤销证书
+exports.renderRevoke = function (req, res, next) {
+    console.log('1');
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        // console.log('total');
+        res.render('revoke', {
+            title: 'Revoke',
+            username: req.session.username
+        });
+    }
+};
+
+//批量录入
+exports.renderExcel = function (req, res, next) {
     // console.log('1');
     if (!req.session.username) {
         res.render('login', {
@@ -112,8 +129,8 @@ exports.renderSold_out = function (req, res, next) {
         });
     } else {
         // console.log('total');
-        res.render('sold_out', {
-            title: 'sold_out',
+        res.render('excel', {
+            title: 'excel',
             username: req.session.username
         });
     }

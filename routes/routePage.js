@@ -8,6 +8,10 @@ module.exports = function (app) {
     app.route('/')
         .get(renderPage.renderLogin);
 
+    // app.route('/')
+    //     .get(renderPage.renderExcel);
+
+
     app.route('/register')
         .get(renderPage.renderRegister);
 
@@ -23,7 +27,10 @@ module.exports = function (app) {
     app.route('/view_details')
         .get(renderPage.renderViewDetails);
 
-    app.route('/sold_out')
-        .get(renderPage.renderSold_out);
+    app.route('/revoke')
+        .get(renderPage.renderRevoke);
+    
+    app.route('/excel')
+        .get(renderPage.renderExcel);
 
 };

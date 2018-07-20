@@ -37,4 +37,7 @@ module.exports = function (app) {
         
     app.route('/getAllTx')
         .get(api.getAllTx);
+
+    app.route('/remove')
+        .get(api.remove);
 };

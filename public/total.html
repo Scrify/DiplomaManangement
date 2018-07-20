@@ -31,61 +31,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <script src="/socket.io/socket.io.js"></script>
-    <style>
-        #buy-div{
-            z-index: 99999;
-            background-color: rgba(0,0,0,0.5);
-            position: fixed;
-            margin:auto;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: none;
-        }
-        #buy-box{
-            position: relative;
-            left:0;
-        }
-    </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div id="buy-div">
-    <div class="register-box" id="buy-box">
-        <div class="register-box-body">
-            <p class="register-box-msg">购买虚币</p>
-            <form class="form-horizontal">
-                <div class="box-body">
-                    <div class="form-group">
-                        <label for="bid" class="col-sm-6 control-label">货币ID：</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="bid" disabled="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="value" class="col-sm-6 control-label">当时价格：</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="value" disabled="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="new_value" class="col-sm-6 control-label">买入价格：</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="new_value">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="box-footer">
-                    <button type="button" id="cancel" class="btn btn-default">取消</button>
-                    <button type="button" id="to_buy" class="btn btn-info pull-right">购买</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <div class="wrapper">
 
     <!-- Main Header -->
@@ -178,8 +125,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="/buy">买入</a></li>
-                        <li><a href="/sold_out">卖出</a></li>
+                        <li><a href="/excel">批量录入</a></li>
+                        <li><a href="/Revoke">撤销证书</a></li>
                     </ul>
                 </li>
 
@@ -216,116 +163,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Main content -->
         <section class="content">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-green"><i class="fa fa-cny"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">买入总价</span>
-                            <span class="info-box-number" id="total_cost"></span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
 
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-blue"><i class="fa fa-cny"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">总市值</span>
-                            <span class="info-box-number" id="total_value"></span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-blue"><i class="fa fa-cny"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">卖出总价</span>
-                            <span class="info-box-number" id="total_income"></span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div><meta charset="utf-8">
-                    <!-- /.info-box -->
-                </div>
-
-                <div class="col-md-3">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-orange"><i class="fa fa-cny"></i></span>
-                        <div class="info-box-content">
-                            <span class="info-box-text">净利润</span>
-                            <span class="info-box-number" id="total_profit"></span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-                <div class="col-md-12 col-xs-12">
-                    <!-- LINE CHART -->
-                    <div class="box box-info">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">交易行情变化</h3>
-                        </div>
-                        <div class="box-body chart-responsive">
-                            <div class="chart" id="line-chart" style="height: 300px;"></div>
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                    <!-- /.box -->
-                    <!-- /.box -->
-
-                </div>
-                <div class="col-md-6 col-xs-12">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title">我的虚币</h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <table id="mine_table" class="table table-bordered table-striped">
-                                <thead>
-                                <tr>
-                                    <th>编号</th>
-                                    <th>货币id</th>
-                                    <th>交易价格</th>
-                                    <th>交易时间</th>
-                                    <th>详情</th>
-                                </tr>
-                                </thead>
-                                <tbody id="mine">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-xs-12">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title">他人虚币</h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <table id="not_mine_table" class="table table-bordered table-striped">
-                                <thead>
-                                <tr>
-                                    <th>编号</th>
-                                    <th>货币id</th>
-                                    <th>交易价格</th>
-                                    <th>交易时间</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody id="not_mine">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
     </div>
     <!-- /.content-wrapper -->
