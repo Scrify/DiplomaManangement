@@ -2,6 +2,8 @@ npm install
 
 
 在 fabric-samples/fabcar/Fabconn.js 中加入
+
+
     /**
      * API
      * 将从客户端接受的文件的base64编码作为一个交易加入区块链
@@ -21,6 +23,8 @@ npm install
         }
 
     }
+    
+    
 
 注释掉 fabric-samples/DiplomaManangement/node_modules/raw-body/index.js 中 readStream 中的
 
