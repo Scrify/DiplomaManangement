@@ -15,9 +15,6 @@ module.exports = function (app) {
     app.route('/logout')
         .get(api.logout);
 
-    app.route('/changePwd')
-        .post(api.changePwd);
-        
     app.route('/confirm')
         .post(api.confirm);
     // app.route('/typerule')
@@ -26,18 +23,17 @@ module.exports = function (app) {
     app.route('/api')
         .get(api.api);
 
+    app.route('/api')
+        .post(api.api);
+
     app.route('/getMyTxHistory')
         .get(api.getMyTxHistory);
 
-    app.route('/getIncomeAndProfit')
-        .get(api.getIncomeAndProfit);
-
-    app.route('/getLastValue')
-        .get(api.getLastValue);
         
     app.route('/getAllTx')
         .get(api.getAllTx);
 
     app.route('/remove')
         .get(api.remove);
+
 };

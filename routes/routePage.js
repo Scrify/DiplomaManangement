@@ -8,29 +8,21 @@ module.exports = function (app) {
     app.route('/')
         .get(renderPage.renderLogin);
 
-    // app.route('/')
-    //     .get(renderPage.renderExcel);
-
-
     app.route('/register')
         .get(renderPage.renderRegister);
 
-    app.route('/changePwd')
-        .get(renderPage.renderChangePwd);
 
     app.route('/total')
         .get(renderPage.renderTotal);
 
-    app.route('/buy')
-        .get(renderPage.renderBuy);
-
-    app.route('/view_details')
-        .get(renderPage.renderViewDetails);
 
     app.route('/revoke')
         .get(renderPage.renderRevoke);
     
     app.route('/excel')
         .get(renderPage.renderExcel);
+
+    app.route('/sample')
+        .get(renderPage.renderSample); 
 
 };

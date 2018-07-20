@@ -133,95 +133,6 @@ exports.register = function (req, res, next) {
     })()
 };
 
-exports.changePwd = function (req, res, next) {
-    let username = req.session.username;
-    let old_pwd = req.body.old_pwd;
-    let new_pwd = req.body.new_pwd;
-    (async () => {
-        try {
-            //begin
-            mgclient = await MongoClient.connect(DBurl);
-            let col = mgclient.db().collection('users');
-            old_pwd = crypto.pbkdf2Sync(old_pwd, 'njustXP2018', 10000, 64, 'md5').toString('base64');
-            let docs = await col.find({ "_id": username ,"pwd":old_pwd}).toArray();
-            let docs_str = docs.join();
-            let result = {};
-            if (docs_str === ""){
-                result.code = 404;
-                result.message = '原密码错误！';
-            }else {
-                new_pwd = crypto.pbkdf2Sync(new_pwd, 'njustXP2018', 10000, 64, 'md5').toString('base64');
-                let doc = await col.updateOne({ "_id": username }, { $set: { "pwd": new_pwd } });
-                if (doc.result.ok !== 1) {
-                    result.code = 400;
-                    result.message = '修改密码错误！';
-                } else {
-                    let username = req.session.username;
-                    delete fc_list[username];
-                    req.session.destroy();
-                    result.code = 200;
-                    result.message = '修改成功，请重新登录！';
-                }
-            }
-            res.write(JSON.stringify(result));
-            res.end();
-            mgclient.close();
-            //end
-        } catch (err) {
-            res.write(JSON.stringify({
-                code: 400,
-                message: '修改密码错误' + err
-            }));
-            res.end();
-        }
-    })()
-};
-
-//计算持有虚币个数，最后交易价格，传给前端用于计算当前市值
-exports.getLastValue = function (req, res, next) {
-    var username = req.session.username;
-    if (username === null) {
-        return res.render('login', {
-            title: 'Login',
-            messages: '请先登录!'
-        });
-    }
-    (async () => {
-        try {
-            let fc = fc_list[username];
-            //let mykeys = await eval('fc.mykeys("bid00","bid99")');
-            let mykeys = await fc.mykeys("bid00", "bid99");
-            let count = 0;
-            for (let key in mykeys) {
-                //if (mykeys[key]['isMine'] === true) {  //避免用数组形式来访问非数组结构
-                if (mykeys[key].isMine) count++;
-            }
-            let last_tx_value_max = 0;
-            //let last_tx = await eval('fc.mytxlast()');
-            let last_tx = await fc.mytxlast(); //调用该方法有风险，最后一次交易可能不是用户链码交易，可能是链码升级
-            //console.log(last_tx);
-            //下面可以简化，多个value是相同值，一笔交易购买多个虚币也是同一个价格，股票证券交易也如此
-            /*
-            last_tx['writeset'].forEach(write => {
-                last_tx_value_max = Number(write['value']) > last_tx_value_max ? Number(write['value']) : last_tx_value_max;
-                console.log(last_tx_value_max);
-            });
-            */
-            if (last_tx.writeset.length > 0) {
-                last_tx_value_max = last_tx.writeset[0].value
-            }
-            res.write(JSON.stringify({
-                'count': count,
-                'last_tx_value': last_tx_value_max
-            }));
-        } catch (err) {
-            console.error(err);
-            res.write('错误:' + err); //?
-            //res.end(err.stringify()) //输出?
-        }
-        res.end();
-    })();
-};
 
 exports.getMyTxHistory = function (req, res) {
     var username = req.session.username;
@@ -297,78 +208,7 @@ exports.getMyTxHistory = function (req, res) {
         res.end();
     })();
 };
-//计算收入(卖出)，利润
-//投入总价，一起计算
-exports.getIncomeAndProfit = function (req, res, next) {
-    var username = req.session.username;
-    // console.log(username);
-    if (username === null) {
-        return res.render('login', {
-            title: 'Login',
-            messages: '请先登录!'
-        });
-    }
-    (async () => {
-        try {
-            let fc = fc_list[username];
-            //let mytx = await eval('fc.mytx()');
-            //注意，函数mytx要遍历整条链，如果超过1000个区块，页面就挂了，可能超过10秒
-            //相同页面上已经调用过一次
-            //建议页面上用一个进度条显示进度，然后用session保存一个数组mytx，以后每次购买完成之后都mytx.push(新交易)
-            //用增量更新来避免完整更新，以改善性能
-            let mytx = await fc.mytx();
-            let profit = 0; //利润
-            let income = 0; //卖出总价
-            let buyin = 0; //买入总价
-            //for (let i = 0; i < mytx.length; i++) { //每个交易
-            //    let tx = mytx[i];
-            for (let tx of mytx) {
-                //let now_txid = tx['tx_id'];
-                let now_txid = tx.tx_id;
-                //let writeset = tx['writeset'];
-                let writeset = tx.writeset;
-                //console.log(now_txid);
-                //for (let j = 0; j < writeset.length; j++) { //每一个key=bidXX
-                //    let the_b = writeset[j];
-                for (let the_b of writeset) {
-                    let the_tx_value = 0;
-                    let now_value = 0;
-                    //let the_history = await eval('fc.query("history","' + the_b['key'] + '")');
-                    let the_history = await fc.query("history", the_b['key']); //key历史
-                    the_history = JSON.parse(the_history);
-                    let count = 0;
-                    for (let k = 0; k < the_history.length; k++) {
-                        //console.log(the_history[k]);
-                        //if (the_history[k]['txid'] === now_txid) {
-                        if (the_history[k].txid === now_txid) {
-                            count = k;
-                        }
-                    }
-                    //此时count指向买入交易
-                    //the_tx_value = Number(the_history[count]['value']); //买入价格
-                    the_tx_value = Number(the_history[count].value); //买入价格
-                    buyin += the_tx_value;
-                    if (count !== (the_history.length - 1)) { //买入交易是否为最后交易
-                        now_value = Number(the_history[count + 1].value); //若不是，下一个交易就是卖出，取卖出价格
-                        income += now_value;
-                        profit += (now_value - the_tx_value);
-                    }
-                }
-            } //以上计算比较复杂，能否简化？
-            res.write(JSON.stringify({
-                'income': income,
-                'profit': profit,
-                'buyin': buyin
-            }));
-        } catch (err) {
-            console.error(err);
-            res.write('错误:' + err); //?
-            //res.end(err.stringify()) //输出?
-        }
-        res.end();
-    })();
 
-};
 //通用API调用， 比如 /?cmd=query('history','bid01')
 exports.api = function (req, res, next) {
     var username = req.session.username;
@@ -382,17 +222,30 @@ exports.api = function (req, res, next) {
         try {
             // let ret = await eval(cmd);
             var fc = fc_list[username];
-            var cmd = 'fc.' + req.query.cmd;
-            console.log(cmd);
+            var cmd1 = 'fc.' + req.query.cmd;
+            var cmd2 = 'fc.' + req.body.cmd;
+            var length = req.body.length;
+            var cmd ='';
+            if(cmd1 == 'fc.undefined'){//post方法
+
+                cmd = cmd2;
+                // console.log(cmd);
+
+            }else{//get方法
+                cmd = cmd1;
+                // console.log(cmd);
+            }
+            // console.log(cmd);
             if (cmd.startsWith('fc.invoke')) {
                 eval(cmd); //注意，invoke调用也可能有返回，但invoke(put,k,v)无返回
-                res.write('提交交易成功！');
+                res.write('录入成功！');
             } else {
                 var ret = await eval(cmd);
                 if (ret !== undefined) {
-                    // console.log(ret);
-                    res.write(JSON.stringify(ret))
-                    // res.write(ret)
+
+                    res.write(JSON.stringify(ret));
+
+
                 }
             }
         } catch (err) {
@@ -455,31 +308,23 @@ exports.remove = function (req, res, next) {
         try {
             let fc = fc_list[username];
             let key = req.query.key;
-            let txtype = req.query.txtype;
             let reason = req.query.reason;
             let curtx = await fc.query("get",key);
+            // let msg = eval('(' + curtx + ')');
+            // console.log(msg);
+
             if(!curtx){
                 res.write('无此证书！');                
+            }else if(eval('(' + curtx + ')').status){
+                res.write('该证书已被撤销！');                
             }else{
-                curtx = eval('(' + curtx + ')');
-                
-                let result = {
-                    'num': curtx.num,
-                    'txtpye': txtype,
-                    'schoolsystem': curtx.schoolsystem,
-                    'school': curtx.school,
-                    'certdate': curtx.certdate,
-                    'name': curtx.name,
-                    'sex': curtx.sex,
-                    'birthday': curtx.birthday,
-                    'begin': curtx.begin,
-                    'end': curtx.end,
-                    'major': curtx.major,
-                    'status': "撤销",
-                    'reason': reason,
-                    'degree': curtx.degree
-                }
-                // console.log(result);
+
+                result = JSON.parse(curtx);
+
+                result.status = "撤销";
+                result.reason = reason;
+                console.log(result);
+
                     
                 fc.invoke("put",key,JSON.stringify(result));
                 res.write('撤销成功！');

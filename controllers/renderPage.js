@@ -30,42 +30,7 @@ exports.renderRegister = function (req, res) {
     // next()
 };
 
-exports.renderChangePwd = function(req, res){
-    if (!req.session.username) {
-        res.render('login', {
-            title: 'Login',
-            messages: '请先登录'
-        });
-    } else {
-        // console.log('total');
-        res.render('reset', {
-            title: 'Change Password',
-            username: req.session.username
-        });
-    }
-};
 
-//买入页面
-exports.renderBuy = function (req, res) {
-    if (!req.session.username) {
-        res.render('login', {
-            title: 'Login',
-            messages: '请先登录'
-        });
-    } else {
-        let bid = req.query.bid;
-        let value = req.query.value;
-        //console.log("bid=",bid,';value=',value);
-        // console.log('total');
-        res.render('buy', {
-            title: 'Buy',
-            //username: req.session.username ? req.session.username : null
-            username: req.session.username,
-            bid : bid,      //页面上添加渲染变量
-            value : value
-        });
-    }
-};
 //个人主页
 exports.renderTotal = function (req, res, next) {
     // console.log('1');
@@ -82,25 +47,7 @@ exports.renderTotal = function (req, res, next) {
         });
     }
 };
-//查看某个虚币历史页面
-exports.renderViewDetails = function (req, res, next) {
-    // console.log('1');
-    if (!req.session.username) {
-        res.render('login', {
-            title: 'Login',
-            messages: '请先登录'
-        });
-    } else {
-        let bid = req.query.bid; //从请求中获取bid
-        // console.log('total');
-        res.render('view_details', {
-            title: 'Details',
-            username: req.session.username,
-            bid : bid  //用bid渲染替代页面上的<%=bid%>
-            // messages: null
-        });
-    }
-};
+
 
 //撤销证书
 exports.renderRevoke = function (req, res, next) {
@@ -131,6 +78,23 @@ exports.renderExcel = function (req, res, next) {
         // console.log('total');
         res.render('excel', {
             title: 'excel',
+            username: req.session.username
+        });
+    }
+};
+
+//录入样本
+exports.renderSample = function (req, res, next) {
+    // console.log('1');
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        // console.log('total');
+        res.render('sample', {
+            title: 'Sample',
             username: req.session.username
         });
     }

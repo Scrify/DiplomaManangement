@@ -63,57 +63,58 @@ var event = new EventEmitter();
 
 app.set('event', event);
 
-// 服务初始化
-(async () => {
-    let fc = await FConn.FConnect('admin');
-    fc_list['admin'] = fc;
 
-    let t1 = new Date().getTime();
-    // 初始化所有交易缓存，该过程只需要进行一次
-    txall = await fc.mytxall("2");
+// // 服务初始化
+// (async () => {
+//     let fc = await FConn.FConnect('admin');
+//     fc_list['admin'] = fc;
 
-    let t2 = new Date().getTime();
-    //初始化最后一个区块编号
-    block_num['admin'] = await fc.getBlocknum();
+//     let t1 = new Date().getTime();
+//     // 初始化所有交易缓存，该过程只需要进行一次
+//     txall = await fc.mytxall("2");
 
-    //设置遍历时间
-    time = t2 - t1;
+//     let t2 = new Date().getTime();
+//     //初始化最后一个区块编号
+//     block_num['admin'] = await fc.getBlocknum();
 
-    let eh = fc.client.newEventHub();
-    eh.setPeerAddr(fc.event_url, fc.grpcOpts);
-    let num = eh.registerBlockEvent((block) => {
-            // console.log(io);
-            (async () => {
-                try {
-                    let fc = fc_list['admin'];
-                    let first_tx = block.data.data[0]; // get the first transaction
-                    let header = first_tx.payload.header; // the "header" object contains metadata of the transaction
-                    let channel_id = header.channel_header.channel_id;
-                    if (fc.channel_id !== channel_id) return; //过滤一个信道上的区块
-                    let now_block_number = Number(block.header.number);
-                    console.log("监听到新区块，编号为", now_block_number);
-                    if (now_block_number + 1 > block_num['admin']) {
-                        let t1 = new Date().getTime();
-                        let add_txall = await fc_list['admin'].mytxall(block_num['admin'].toString());
-                        let t2 = new Date().getTime();
-                        time += t2 - t1;
-                        for (let add_tx of add_txall) {
-                            txall.push(add_tx)
-                        }
-                        block_num['admin'] = now_block_number + 1;
-                        event.emit('getNewBlock');
-                    }
-                } catch (err) {
-                    console.log("更新区块变化失败：", err);
-                }
-            })();
-        },
-        (err) => {
-            console.log('监听出错:', err);
-        }
-    );
-    await eh.connect();
-    console.log('正在监听新区块，Ctrl+c退出监听，也退出fnc');
-})();
+//     //设置遍历时间
+//     time = t2 - t1;
+
+//     let eh = fc.client.newEventHub();
+//     eh.setPeerAddr(fc.event_url, fc.grpcOpts);
+//     let num = eh.registerBlockEvent((block) => {
+//             // console.log(io);
+//             (async () => {
+//                 try {
+//                     let fc = fc_list['admin'];
+//                     let first_tx = block.data.data[0]; // get the first transaction
+//                     let header = first_tx.payload.header; // the "header" object contains metadata of the transaction
+//                     let channel_id = header.channel_header.channel_id;
+//                     if (fc.channel_id !== channel_id) return; //过滤一个信道上的区块
+//                     let now_block_number = Number(block.header.number);
+//                     console.log("监听到新区块，编号为", now_block_number);
+//                     if (now_block_number + 1 > block_num['admin']) {
+//                         let t1 = new Date().getTime();
+//                         let add_txall = await fc_list['admin'].mytxall(block_num['admin'].toString());
+//                         let t2 = new Date().getTime();
+//                         time += t2 - t1;
+//                         for (let add_tx of add_txall) {
+//                             txall.push(add_tx)
+//                         }
+//                         block_num['admin'] = now_block_number + 1;
+//                         event.emit('getNewBlock');
+//                     }
+//                 } catch (err) {
+//                     console.log("更新区块变化失败：", err);
+//                 }
+//             })();
+//         },
+//         (err) => {
+//             console.log('监听出错:', err);
+//         }
+//     );
+//     await eh.connect();
+//     console.log('正在监听新区块，Ctrl+c退出监听，也退出fnc');
+// })();
 
 module.exports = app;

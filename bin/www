@@ -33,7 +33,7 @@ console.log('server start at '+ip+':'+port);
 
 server.on('error', onError);
 server.on('listening', onListening);
-require('../controllers/total').listen(server);
+// require('../controllers/total').listen(server);
 /**
  * Normalize a port into a number, string, or false.
  */

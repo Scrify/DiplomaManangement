@@ -173,12 +173,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <input type="text" class="form-control" id="reason">
                                     </div>
                                 </div>
-                                <!-- <div class="form-group">
-                                    <label for="new_value" class="col-sm-2 control-label">买入价格：</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="new_value">
-                                    </div>
-                                </div> -->
                             </div>
 
                             <div class="box-footer">
@@ -216,40 +210,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
 <script>
-    //以下代码低级冗余设计，应采用更简单办法来获取bid和value
-    /*
-    var url = location.search; //获取url中"?"符后的字串
-    var theRequest = new Object();
-    if (url.indexOf("?") != -1) {
-        var str = url.substr(1);
-        strs = str.split("&");
-        for (var i = 0; i < strs.length; i++) {
-            theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
-        }
-    }
-    var bid = theRequest.bid;
-    //以上代码可以去除
-    $.ajax({
-        url:'/api',
-        type:'get',
-        data:{
-            cmd:'mykeys("bid01","bid99")'  //返回太多，应调用mykey(bid)
-        },
-        success:function(data){
-            var data = eval('(' + data + ')');
-            var b = data[bid];
-            $('#bid').val(bid);
-            $('#value').val(b.value);
-        },
-        error:function(e){
-            alert('server error!');
-        }
-    });
-    */
-     
-    //以上ajax可以去掉，修改[1]total上传递bid与value,[2]服务器渲染bid与value,[3]本页用ajax读取这两个值
-    //更简单的办法，可去掉本页面。
-    //在tatal页面上，利用动态页面编程，点击‘购买'之后弹出一个输入确认框，输入价格，点击确认，再执行api
     $('#cancel').click(function () {
         $('#num').val("");
         $('#reason').val("");
@@ -281,6 +241,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 txtype: txtype
             },
             success: function (data) {
+                $('#num').val("");
+                $('#reason').val("");
                 alert(data);
             },
             error: function (e) {

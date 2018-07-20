@@ -129,19 +129,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <span>主界面</span>
                         </a>
                     </li>
-
-                    <!-- <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
-                        <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="#">Link in level 2</a></li>
-                        <li><a href="#">Link in level 2</a></li>
-                    </ul>
-                </li> -->
                 </ul>
                 <!-- /.sidebar-menu -->
             </section>
@@ -168,21 +155,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- Main content -->
             <section class="content">
                 <form>
-                <!-- <form action="/upload_excel" method="POST"> -->
+                    <!-- <form action="/upload_excel" method="POST"> -->
                     <div class="col-md-12 col-xs-12">
                         <div class="box">
                             <div class="box-header">
                                 <h3 class="box-title">上传文件</h3>
                                 <div class="col-xs-2" style="float: right">
-                                    <button type="button" id="upload" class="btn btn-block btn-primary">上传</button>
+                                    <button type="button" id="upload" class="btn btn-block btn-primary" disabled="disabled">上传</button>
                                 </div>
                                 <div class="col-xs-3" style="float: right">
-                                    <button type="button" id="select" class="btn btn-block btn-info">选择文件</button>
+                                    <button type="button" id="select" class="btn btn-block btn-info change">选择文件</button>
                                     <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel,.xlsx,xls"
                                         name="file" id="upfile" style="display: none">
                                 </div>
                                 <div class="col-xs-4" style="float: right">
-                                    <select id="Txtype" name="Txtype" class="btn btn-block btn-default">
+                                    <select id="Txtype" name="Txtype" class="btn btn-block btn-default change">
                                         <option value="XWZ">学士学位证书</option>
                                         <option value="BYZ" selected="selected">毕业证书</option>
                                     </select>
@@ -243,6 +230,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="dist/js/xlsx.core.min.js"></script>
     <script>
         $('#select').click(function () {
+            $('#upfile').val('');
             $('#upfile').click();
         });
 
@@ -252,18 +240,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
         $('#upfile').on("change", function (e) {
+
+            // 清空数组
+            diplima.splice(0, diplima.length);
+            flag = true;
             var html = '';
+            //获取证书类型
+            var Txtype = $('#Txtype').val();
+
             //将文件显示在列表中
             $('#FileList').empty("");
+
             html = '<tr><td id="tds">' + e.currentTarget.files[0].name + '</td>' +
                 '<td id="tds">' + (e.currentTarget.files[0].size / 1000).toFixed(1) + 'KB</td>' +
                 '<td id="status"><span>检查文件内容</span></td></tr>'
-            // '<td>' +
-            // '<button type="button" class="btn btn-danger delete">删  除</button>' +
-            // '<button type="button" class="btn btn-info reload">重  传</button>'+
-            // '</td></tr>'
             $('#FileList').append(html);
-            console.log(e.currentTarget.files);
+            //console.log(e.currentTarget.files);
 
 
             var files = e.target.files;
@@ -278,255 +270,189 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         data = []; // 存储获取到的数据
                 } catch (e) {
                     $('#status').html('<span style="color: red;">文件类型不正确</span>');
-                    console.log('文件类型不正确');
+                    //console.log('文件类型不正确');
                     return;
                 }
 
+
                 // 表格的表格范围，可用于判断表头是否数量是否正确
                 var fromTo = '';
-                //获取证书类型
-                var Txtype = $('#Txtype').val();
+
                 // 遍历每张表读取
                 for (var sheet in workbook.Sheets) {
                     if (workbook.Sheets.hasOwnProperty(sheet)) {
                         fromTo = workbook.Sheets[sheet]['!ref'];
-                        console.log(fromTo);
-                        // // 检查表头
-                        // if (fromTo[0] !== 'A' || fromTo[3] !== 'K') {
-                        //     flag = false;
-                        //     $('#status').html('<span style="color: red;">' + sheet + '中列数错误</span>');
-                        //     // return;
-                        // }
+                        //console.log(fromTo);
                         data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
-                        // break; // 如果只取第一张表，就取消注释这行
+                        break; // 如果只取第一张表，就取消注释这行
                     }
                 }
-                console.log(data);
-                console.log(Txtype);
+                
+                //存放excel中已检查过的num，用来检查重复
                 var arr = [];
-                // var headStr = '编号,姓名,学校,性别'; 
-                console.log(fromTo);
-                switch (Txtype) {
-                    case "BYZ":
-                        for (var i = 0; i < data.length; i++) {
-                            // console.log(Object.keys(data));
 
-                            // console.log(Object.keys(data[i]));
+                for (var i = 0; i < data.length; i++) {
 
-                            diplima.push({
-                                'num': data[i].编号,
-                                'txtpye': data[i].证书类别,
-                                'schoolsystem': parseInt(data[i].学制),
-                                'school': data[i].学校,
-                                'certdate': data[i].发证日期,
-                                'name': data[i].姓名,
-                                'sex': data[i].性别,
-                                'birthday': data[i].生日,
-                                'begin': data[i].入学日期,
-                                'end': data[i].毕业日期,
-                                'major': data[i].专业
-                            });
+                    //编码问题?
+                    diplima.push({
+                        'num': data[i].编号,
+                        'txtpye': data[i].证书类别,
+                        'schoolsystem': data[i].学制,
+                        'school': data[i].学校,
+                        'certdate': data[i].发证日期,
+                        'name': data[i].姓名,
+                        'sex': data[i].性别,
+                        'birthday': data[i].生日,
+                        'begin': data[i].入学日期,
+                        'end': data[i].毕业日期,
+                        'major': data[i].专业,
+                        'degree': data[i].学位,
 
-                            //检查证书类别
-                            if(diplima[i].txtpye !== "毕业证书"){
+                    });
+
+                    //检查证书类别
+                    if ((diplima[i].txtpye !== "毕业证书" && Txtype == "BYZ") || (diplima[i].txtpye !=="学士学位证书" && Txtype == "XWZ")) {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行证书类别错误</span>');
+                        $('#upload').attr("disabled", true);
+                        return;
+                    }
+
+                    //检查学制、学校、姓名、专业、学位
+                    if (!diplima[i].schoolsystem && Txtype == "BYZ") { //学制
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行学制为空</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+                    if (!diplima[i].school) {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行学校为空</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+                    if (!diplima[i].name) {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行姓名为空</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+                    if (!diplima[i].major) {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行专业为空</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+                    if (!diplima[i].degree && Txtype == "XWZ") { //学位
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行学位为空</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+
+                    //检查性别
+                    if (diplima[i].sex != "男" && diplima[i].sex != "女") {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行性别错误</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+
+                    //检查位数
+                    if ((diplima[i].num.length != 18 && Txtype == "BYZ") || (diplima[i].num.length != 16 &&
+                            Txtype == "XWZ")) {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行证书编号长度有误</span>');
+                        $('#upload').attr("disabled", true);
+                        // //console.log(diplima);
+                        return;
+                    }
+
+                    //编号查重
+                    if (i > 0) {
+                        for (var j = 0; j < arr.length; j++) {
+                            if (arr[j] == diplima[i].num) {
                                 flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行证书类别错误</span>');
+                                $('#status').html('<span style="color: red;">第' + (j + 2) + '和第' + (i + 2) +'行证书编号重复</span>');
+                                $('#upload').attr("disabled", true);
+                                // //console.log(diplima);
                                 return;
                             }
-
-                            //检查学制学校姓名专业
-                            if(!diplima[i].schoolsystem){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行学制为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-                            if(!diplima[i].school){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行学校为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-                            if(!diplima[i].name){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行姓名为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-                            if(!diplima[i].major){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行专业为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-
-                            //检查性别
-                            if(diplima[i].sex != "男" && diplima[i].sex != "女"){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行性别不正确</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-
-                            //检查位数
-                            if (diplima[i].num.length != 18) {
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行证书编号长度有误</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-
-                            //编号查重
-                            if (i > 0) {
-                                for (var j = 0; j < arr.length; j++) {
-                                    if (arr[j] == diplima[i].num) {
-                                        flag = false;
-                                        $('#status').html('<span style="color: red;">第' + (j + 2) + '和第' +(i + 2) + '行证书编号重复</span>');
-                                        // console.log(diplima);
-                                        return;
-                                    }
-                                }
-                            }
-                            arr.push(diplima[i].num);
+                        }
+                    }
+                    arr.push(diplima[i].num);
 
 
-                            //检查日期
-                            var regex = new RegExp(/^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$/);
-                            if (!regex.test(diplima[i].certdate)) { 
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行发证日期错误</span>');
-                                return; 
-                            }
-                            if (!regex.test(diplima[i].birthday)) { 
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行生日日期错误</span>');
-                                return; 
-                            }
-                            if (!regex.test(diplima[i].begin)) { 
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行入学日期错误</span>');
-                                return; 
-                            }
-                            if (!regex.test(diplima[i].end)) { 
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行毕业日期错误</span>');
-                                return; 
-                            }
-                        };
-                        break;
-                    case "XWZ":
-                        for (var i = 0; i < data.length; i++) {
-                            // console.log(Object.keys(data));
+                    //检查日期
+                    var regex = new RegExp(
+                        /^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$/
+                    );
+                    if (!regex.test(diplima[i].certdate)) { //发证日期
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行发证日期错误</span>');
+                        $('#upload').attr("disabled", true);
+                        return;
+                    }
+                    if (!regex.test(diplima[i].birthday)) { //出生日期
+                        flag = false;
+                        $('#upload').attr("disabled", true);
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行生日日期错误</span>');
+                        return;
+                    }
+                    if (!regex.test(diplima[i].begin) && Txtype == "BYZ") {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行入学日期错误</span>');
+                        $('#upload').attr("disabled", true);
+                        return;
+                    }
+                    if (!regex.test(diplima[i].end) && Txtype == "BYZ") {
+                        flag = false;
+                        $('#status').html('<span style="color: red;">第' + (i + 2) + '行毕业日期错误</span>');
+                        $('#upload').attr("disabled", true);
+                        return;
+                    }
+                };
 
-                            // console.log(Object.keys(data[i]));
-
-                            diplima.push({
-                                'num': data[i].编号,
-                                'txtpye': data[i].证书类别,
-                                'degree': data[i].学位,
-                                'school': data[i].学校,
-                                'certdate': data[i].发证日期,
-                                'name': data[i].姓名,
-                                'sex': data[i].性别,
-                                'birthday': data[i].生日,
-                                'major': data[i].专业
-                            });
-
-                            //检查证书类别
-                            if(diplima[i].txtpye !== "学士学位证书"){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行证书类别错误</span>');
-                                return;
-                            }
-
-                            //检查学位学校姓名专业
-                            if(!diplima[i].degree){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行学位为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-                            if(!diplima[i].school){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行学校为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-                            if(!diplima[i].name){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行姓名为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-                            if(!diplima[i].major){
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行专业为空</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-
-                            //检查位数
-                            if (diplima[i].num.length != 16) {
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第' + (i + 2) +'行证书编号长度有误</span>');
-                                // console.log(diplima);
-                                return;
-                            }
-
-                            //编号查重
-                            if (i > 0) {
-                                for (var j = 0; j < arr.length; j++) {
-                                    if (arr[j] == diplima[i].num) {
-                                        flag = false;
-                                        $('#status').html('<span style="color: red;">第' + (j + 2) + '和第' +(i + 2) + '行证书编号重复</span>');
-                                        // console.log(diplima);
-                                        return;
-                                    }
-                                }
-                            }
-                            arr.push(diplima[i].num);
-
-
-                            //检查日期
-                            var regex = new RegExp(/^(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)$/);
-                            if (!regex.test(diplima[i].certdate)) { 
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行发证日期错误</span>');
-                                return; 
-                            }
-                            if (!regex.test(diplima[i].birthday)) { 
-                                flag = false;
-                                $('#status').html('<span style="color: red;">第'+ (i + 2) + '行生日日期错误</span>');
-                                return; 
-                            }
-                        };
-                        break;
-                    default:
-                        break;
-                }
-                if(flag){
+                if (flag) {
                     $('#status').html('<span>等待上传</span>');
+                    $('#upload').attr("disabled", false);  
                 }
-            // console.log(diplima);
 
             }
             // 以二进制方式打开文件
             fileReader.readAsBinaryString(files[0]);
 
+
         });
 
+        $('#Txtype').on("change", function () {
+            // 清空
+            diplima.splice(0, diplima.length);
+            flag = true;
+            $('#FileList').empty("");
+            $('#upload').attr("disabled", true);
+        });
+
+
         $('#upload').click(function () {
-            
-            // $('#status').html('<span style="color: #5FB878;">上传成功</span>');
-            // console.log(diplima);
-            if(flag){
+
+            if (diplima.length == 0) {
+                alert("请选择要上传的文件!");
+                return;
+            }
                 //一个交易一个证书
                 // $.each(diplima, function (i, item) {
                 //     var key = $('#Txtype').val() + item.num;
-                //     console.log(key);
+                //     //console.log(key);
                 //     cmd = 'invoke("put","'+key+'",\''+JSON.stringify(item)+'\')';
-                //     console.log(item);
-                //     console.log(cmd);
+                //     //console.log(item);
+                //     //console.log(cmd);
                 //     $.ajax({
                 //         url:'/api',
                 //         type:'get',  //不适合get，应采用post，invoke调用应避免缓存
@@ -545,43 +471,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 // }); 
 
                 //一个交易多个证书
-                var json = '';
-                $.each(diplima, function (i, item) {
-                    var key = $('#Txtype').val() + item.num;
-                    console.log(i);
-                    if(i == 0){
-                        json += '{"'+ key +'":'+ JSON.stringify(item) +',';
-                    }else if(i == diplima.length - 1){
-                        json += '"'+key + '":' +JSON.stringify(item) +'}';
-                    }else{
-                        json += '"'+key + '":' +JSON.stringify(item) +',';
-                    }
-                    // cmd = 'invoke("put","'+key+'",\''+JSON.stringify(item)+'\')';
-                    // console.log(item);
-                    // console.log(cmd);
-                });
+            var json = '';
+            $.each(diplima, function (i, item) {
+                var key = $('#Txtype').val() + item.num;
+                //console.log(i);
+                if (i == 0) {
+                    json += '{"' + key + '":' + JSON.stringify(item) + ',';
+                } else if (i == diplima.length - 1) {
+                    json += '"' + key + '":' + JSON.stringify(item) + '}';
+                } else {
+                    json += '"' + key + '":' + JSON.stringify(item) + ',';
+                }
+            });
 
-                console.log(JSON.stringify(json));
-                var cmd = 'invoke("addMKey",\''+json+'\')';
-                console.log(cmd);
+            //console.log(JSON.stringify(json));
+            var cmd = 'invoke("addMKey",\'' + json + '\')';
+            //console.log("cmd.length:", cmd.length);
+            console.log(cmd);
 
+            $.ajax({
+                url: '/api',
+                type: 'post', //不适合get，应采用post，invoke调用应避免缓存
+                data: {
+                    cmd: cmd
 
-                $.ajax({
-                    url:'/api',
-                    type:'get',  //不适合get，应采用post，invoke调用应避免缓存
-                    data:{
-                        cmd: cmd
-                    },
-                    success:function(data){
-                        alert(data);
-                        $('#status').html('<span style="color: #5FB878;">上传成功</span>');
-                        // window.location = 'total'; //重定向到tatal.html
-                    },
-                    error:function(e){
-                        alert('server error!');
-                    }
-                });
-            }
+                },
+                success: function (data) {
+                    alert(data);
+                    $('#status').html('<span style="color: #5FB878;">上传成功</span>');
+                },
+                error: function (e) {
+                    alert('server error!');
+                }
+            });
         });
     </script>
 </body>
