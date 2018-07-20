@@ -30,9 +30,14 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(bodyParser.urlencoded({
+    limit: '4mb',
     extended: true
 }));
-app.use(bodyParser.json());
+
+app.use(bodyParser.json({
+    limit: '4mb'
+}));
+
 app.use(methodOverride());
 
 
