@@ -210,7 +210,7 @@ exports.getMyTxHistory = function (req, res) {
         } catch (err) {
             console.error(err);
             res.write('错误:' + err); //?
-            //res.end(err.stringify()) //输出?
+
         }
         res.end();
     })();
@@ -219,6 +219,7 @@ exports.getMyTxHistory = function (req, res) {
 //通用API调用， 比如 /?cmd=query('history','bid01')
 exports.api = function (req, res, next) {
     var username = req.session.username;
+    console.log(username);
     if (username === null) {
         return res.render('login', {
             title: 'Login',
@@ -230,7 +231,7 @@ exports.api = function (req, res, next) {
             var fc = fc_list[username];
             var cmd1 = 'fc.' + req.query.cmd;
             var cmd2 = 'fc.' + req.body.cmd;
-            var length = req.body.length;
+            //var length = req.body.length;
             var cmd = '';
             if (cmd1 == 'fc.undefined') { //post方法
                 cmd = cmd2;
@@ -239,6 +240,7 @@ exports.api = function (req, res, next) {
                 cmd = cmd1;
                 // console.log(cmd);
             }
+            console.log(cmd);
             if (cmd.startsWith('fc.invoke')) {
                 eval(cmd); //注意，invoke调用也可能有返回，但invoke(put,k,v)无返回
                 res.write('录入成功！');
@@ -256,12 +258,10 @@ exports.api = function (req, res, next) {
         res.end();
     })();
 };
-
-
 exports.getAllTx = function (req, res, next) {
     var username = req.session.username;
     console.log("username=" + username);
-    if (username === null) {
+    if (username == null) {
         return res.render('login', {
             title: 'Login',
             messages: '请先登录!'
@@ -320,25 +320,26 @@ exports.getCert = function (req, res, next) {
 exports.getModify = function (req, res, next) {
     var username = req.session.username;
     console.log("username=" + username);
-    if (username === null) {
+    if (username == null) {
         return res.render('login', {
             title: 'Login',
             messages: '请先登录!'
         });
     }
-    let zsbh = req.query.zsbh;
-    let zslb = req.query.zslb;
-    console.log('zsbh=', zsbh);
+   
     (async () => {
         try {
             let fc = fc_list[username];
+            let zsbh = req.body.zsbh;
+            let zslb = req.body.zslb;
+            console.log('zsbh=', zsbh);
             var key = zslb + zsbh;
             let re = await fc.query("get", key);
             console.log(re);
             res.write(re);
         } catch (err) {
             console.error(err);
-            res.write('错误:' + err); 
+            res.write('错误:' + err);
         }
         res.end();
     })();

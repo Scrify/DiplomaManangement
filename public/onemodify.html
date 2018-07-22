@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <title>
+        <%= title %>
+    </title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="bower_components/morris.js/morris.css">
+
+    <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+          page. However, you can choose any other skin. Make sure you
+          apply the skin class to the body tag so the changes take effect. -->
+    <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="index2.html" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">
+                    <b>管</b>理</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    <b>证书管理系统</b>
+                </span>
+            </a>
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- User Account Menu -->
+                        <li class="dropdown user user-menu">
+                            <!-- Menu Toggle Button -->
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <!-- The user image in the navbar-->
+                                <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                <span class="hidden-xs">
+                                    <%=username%>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- The user image in the menu -->
+                                <li class="user-header">
+                                    <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    <p>
+                                        <%=username%>
+                                            <!--<small>Member since Nov. 2012</small>-->
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <li class="user-body">
+                                    <!-- /.row -->
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-right-container">
+                                        <a href="/logout" class="btn btn-default btn-flat" style="float: right;">退出</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>
+                        <%=username%>
+                    </p>
+                    <a href="#">
+                        <i class="fa fa-circle text-success"></i> 用户</a>
+                </div>
+            </div>
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header">目 录</li>
+                <!-- Optionally, you can add icons to the links -->
+                <li>
+                    <a href="/conductor">
+                        <i class="fa fa-link"></i>
+                        <span>主界面</span>
+                    </a>
+                </li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-link"></i>
+                        <span>单项操作</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li>
+                            <a href="/oneinput">单项录入</a>
+                        </li>
+                        <li class="active">
+                            <a href="/onemodify">单项修改</a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a href="/excel">
+                        <i class="fa fa-link"></i>
+                        <span>批量录入</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/count">
+                        <i class="fa fa-link"></i>
+                        <span>模糊查询</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/revoke">
+                        <i class="fa fa-link"></i>
+                        <span>撤销</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/sample">
+                        <i class="fa fa-link"></i>
+                        <span>样本</span>
+                    </a>
+                </li>
+            </ul>
+
+
+        </section>
+    </aside>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                单项录入与修改
+            </h1>
+        </section>
+        <div class="content">
+            <div class="box box-success">
+                <div class="box-header">
+                    <h3 class="box-title">单个修改</h3>
+                    <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
+                        <div class="btn-group" data-toggle="btn-toggle">
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+
+                    <div id="showout0">
+                        <h2>查询证书</h2>
+                        <div class="col-md-10">
+                            <form class="form-horizontal">
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <select class="select" size="1" name="type" id="type">
+                                            <option value="BYZ">学历证书</option>
+                                            <option value="XWZ">学位证书</option>
+                                        </select>
+                                    </tr>
+                                    <tr>
+                                        <td class='alignR' style="width: 100px;">证书编号：</td>
+                                        <td class="form-group">
+                                            <div class="zsbh_tips"></div>
+                                            <input type="text" id="num" name="num" value="" autocomplete="off" required='true' minlength="18" maxlength="18" class='lscx_input'
+                                                placeholder="证书编号" />
+                                        </td>
+                                    </tr>
+                                    <tr class="form-group">
+                                        <td class="col-xs-2">
+                                            <button type="button" id="query" class="btn btn-info">查询</button>
+
+                                        </td>
+                                        <td>
+                                            <div class="col-xs-2">
+                                                <input type="reset" value="重置">
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <div id='showout1'>
+                        <div class="col-md-10">
+                            <!-- Horizontal Form -->
+                            <div class="box box-info">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">学历证书</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <!-- form start -->
+                                <form class="form-horizontal">
+                                    <div class="box-body">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <th for="inputEmail3" class="col-sm-2">证书编号：</th>
+
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="num1" name="num1" value="" autocomplete="off" required='true' minlength="18" maxlength="18" class='lscx_input'
+                                                            placeholder="证书编号" />
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2">证书种类：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="txtype" name="txtype" value="" autocomplete="off" required='true' class='lscx_input' placeholder="证书种类"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th for="inputPassword3" class="col-sm-2 ">姓名：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="name" name="name" value="" autocomplete="off" required='true' class='lscx_input' placeholder="姓名"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2 ">性别：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" name="sex" id="sex">
+                                                            <option value="男">男</option>
+                                                            <option value="女">女</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th for="inputPassword3" class="col-sm-2">出生日期：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="birthday" name="birthday" value="" autocomplete="off" required='true' class='lscx_input' />
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2">入学日期：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="begin" name="begin" value="" autocomplete="off" required='true' class='lscx_input' />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th for="inputPassword3" class="col-sm-2 ">毕业日期：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="end" name="end" value="" autocomplete="off" required='true' class='lscx_input' />
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2 ">发证日期：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="certdate" name="certdate" value="" autocomplete="off" required='true' class='lscx_input' />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th for="inputPassword3" class="col-sm-2">学校：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" name="school" id="school">
+                                                            <option value="南京理工大学">南京理工大学</option>
+                                                            <option value="北京理工大学">北京理工大学</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2 ">专业：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="major" name="major" value="" autocomplete="off" required='true' class='lscx_input' placeholder="专业"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th for="inputPassword3" class="col-sm-2">学历类别：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="classes" name="class" value="" autocomplete="off" required='true' class='lscx_input' placeholder="普通高等教育"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2">学制：</th>
+                                                <td class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <select class="select" size="1" id="schoolsystem" name="schoolsystem">
+                                                            <option value="4">4</option>
+                                                            <option value="3">3</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <th for="inputPassword3" class="col-sm-2 ">学习形式：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" id="form" name="form">
+                                                            <option value="普通全日制">普通全日制</option>
+                                                            <option value="非全日制">非全日制</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <th for="inputPassword3" class="col-sm-2 ">层次：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" id="level" name="level">
+                                                            <option value="本科">本科</option>
+                                                            <option value="大专">大专</option>
+                                                            <option value="硕士">硕士</option>
+                                                            <option value="博士">博士</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <!-- /.box-body -->
+                                    <div class="box-footer">
+                                        <input type="reset" value="重置">
+
+                                        <button type="button" id="byz_submit" class="btn btn-info">录入</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div id='showout2'>
+                        <div class="col-md-10">
+                            <!-- Horizontal Form -->
+                            <div class="box box-info">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">学位证书</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <!-- form start -->
+                                <form name="xwzForm" id="xwzForm">
+                                    <div class="box-body">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                                                <th class="col-sm-2">证书编号：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="num2" name="num2" value="" autocomplete="off" required='true' minlength="16" maxlength="16" class='lscx_input'
+                                                            placeholder="证书编号" />
+                                                    </div>
+                                                </td>
+                                                <th class="col-sm-2">姓名：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="name2" name="name2" value="" autocomplete="off" required='true' class='lscx_input' placeholder="姓名"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class='col-sm-2'>性别：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" name="sex2" id="sex2">
+                                                            <option value="男">男</option>
+                                                            <option value="女">女</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <th class="col-sm-2">出生日期：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="birthday2" name="birthday2" value="" autocomplete="off" required='true' class='lscx_input' />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="col-sm-2">发证日期：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="certdate2" name="certdate2" value="" autocomplete="off" required='true' class='lscx_input' />
+                                                    </div>
+                                                </td>
+                                                <th class="col-sm-2">专业：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" id="major2" name="major2" value="" autocomplete="off" required='true' class='lscx_input' placeholder="专业"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <th class="col-sm-2">学校名称：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" name="school2" id="school2">
+                                                            <option value="南京理工大学">南京理工大学</option>
+                                                            <option value="北京理工大学">北京理工大学</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <th class="col-sm-2">证书层次：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" id="txtype2" name="txtype2">
+                                                            <option value="学士学位">学士学位</option>
+                                                            <option value="硕士学位">硕士学位</option>
+                                                            <option value="博士学位">博士学位</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class='alignR' style="width: 150px;">学位类别：</th>
+                                                <td class="form-group">
+                                                    <div class="col-sm-2">
+                                                        <select class="select" size="1" id="degree2" name="degree2">
+                                                            <option value="工学">工学</option>
+                                                            <option value="理学">理学</option>
+                                                            <option value="经济学">经济学</option>
+                                                            <option value="哲学">哲学</option>
+                                                            <option value="法学">法学</option>
+                                                            <option value="教育学">教育学</option>
+                                                            <option value="文学">文学</option>
+                                                            <option value="历史学">历史学</option>
+                                                            <option value="农学">农学</option>
+                                                            <option value="医学">医学</option>
+                                                            <option value="军事学">军事学</option>
+                                                            <option value="管理学">管理学</option>
+                                                            <option value="艺术学">艺术学</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="box-footer">
+                                        <input type="reset" value="重置">
+                                        <button type="button" id="xwz_submit" class="btn btn-info">录入</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.box-footer -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+    </footer>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- DataTables -->
+    <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <!-- SlimScroll -->
+    <script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="bower_components/fastclick/lib/fastclick.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="bower_components/raphael/raphael.min.js"></script>
+    <script src="bower_components/morris.js/morris.min.js"></script>
+    <script src="dist/js/demo.js"></script>
+    <script>
+        let username = "<%=username%>";
+        console.log(username);
+        $(function () {
+            //隐藏div
+            $("#showout1").hide();
+            $("#showout2").hide();
+        });
+        $('#query').click(function () {
+            var zslb = $("#type").val();
+            var zsbh = $("#num").val();
+            $.ajax({
+                url: '/getModify',
+                type: 'post',
+                data: {
+                    zslb: zslb,
+                    zsbh: zsbh
+                },
+                success: function (data) {
+                    console.log(data);
+                    //data = eval('(' + data + ')')
+                    if (data){
+                        var num=data.num;
+                        if (num.length == 18) {
+                            $("#showout0").hide();
+                            $("#showout1").show();
+                            $("#showout2").hide();
+                            $("#num1").val(data.num);
+                            $('#txtype').val(data.txtype);
+                            $('#school').val(data.school);
+                            $('#begin').val(data.begin);
+                            $('#end').val(data.end);
+                            $('#level').val(data.level);
+                            $('#classes').val(data.classes);
+                            $('#form').val(data.form);
+                            // $("#schoolsystem").text(data.schoolsystem)
+                            $('#certdate').val(data.certdate);
+                            $('#name').val(data.name);
+                            $("#sex").val(data.sex);
+                            $("#birthday").val(data.birthday);
+                            $("#major").val(data.major);
+                        } else {
+                            $("#showout0").hide();
+                            $("#showout2").show();
+                            $("#showout1").hide();
+                            $('#num2').val(data.num);
+                            $('#txtype2').val(data.txtype);
+                            $('#degree2').val(data.degree);
+                            $('#school2').val(data.school);
+                            $('#level2').val(data.level);
+                            $('#certdate2').val(data.certdate);
+                            $('#name2').val(data.name);
+                            $("#sex2").val(data.sex);
+                            $("#birthday2").val(data.birthday);
+                            $("#major2").val(data.major);
+                        }
+                    }
+                    else{
+                        alert("无此证书,请重新输入！");
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                    alert("server error!");
+                }
+            });
+        });
+        $('#byz_submit').click(function () {
+            var num = document.getElementById("num1").value;
+            var txtype = $('#txtype').val();
+            var degree = $('#degree').val();
+            var school = $('#school').val();
+            var begin = $('#begin').val();
+            var end = $('#end').val();
+            var level = $('#level').val();
+            var classes = $('#classes').val();
+            var form = $('#form').val();
+            var certdate = $('#certdate').val();
+            var schoolsystem = $("#schoolsystem").var();
+            var name = $('#name').val();
+            var sex = $("#sex").val();
+            var birthday = $("#birthday").val();
+            var major = $("#major").val();
+            let BYZ1 = {
+                'num': num,
+                'txtype': txtype,
+                'school': school,
+                'begin': begin,
+                'end': end,
+                'level': level,
+                'classes': classes,
+                'form': form,
+                'certdate': certdate,
+                'schoolsystem': schoolsystem,
+                'name': name,
+                'sex': sex,
+                'birthday': birthday,
+                'major': major
+            }
+            console.log(BYZ1);
+            var key = "BYZ" + $("#num1").val();
+            cmd = 'invoke("put","' + key + '",\'' + JSON.stringify(BYZ1) + '\')';
+            console.log(cmd);
+            $.ajax({
+                url: '/api',
+                type: 'post',
+                data: {
+                    cmd: cmd
+                },
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (e) {
+                    alert('server error!');
+                }
+            });
+        });
+        $('#xwz_submit').click(function () {
+            var num = document.getElementById("num2").value;
+            var txtype = $('#txtype2').val();
+            var degree = $('#degree2').val();
+            var school = $('#school2').val();
+            var certdate = $('#certdate2').val();
+            var name = $('#name2').val();
+            var sex = $("#sex2").val();
+            var birthday = $("#birthday2").val();
+            var major = $("#major2").val();
+            let XWZ1 = {
+                'num': num,
+                'txtype': txtype,
+                'certdate': certdate,
+                'name': name,
+                'sex': sex,
+                'school': school,
+                'degree': degree,
+                'birthday': birthday,
+                'major': major
+            }
+            console.log(XWZ1);
+            var key = "XWZ" + $("#num2").val();
+            cmd = 'invoke("put","' + key + '",\'' + JSON.stringify(XWZ1) + '\')';
+            $.ajax({
+                url: '/api',
+                type: 'post',
+                data: {
+                    cmd: cmd
+                },
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (e) {
+                    alert('server error!');
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>

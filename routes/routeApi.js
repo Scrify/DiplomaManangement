@@ -30,7 +30,7 @@ module.exports = function (app) {
         .post(api.getCert);
 
     app.route('/getModify')
-        .get(api.getModify);
+        .post(api.getModify);
 
     app.route('/getMyTxHistory')
         .get(api.getMyTxHistory);

@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="icon" href="/favicon.ico?v=1483494816229" type="image/x-icon" />
+    <link rel="stylesheet" href='https://t4.chei.com.cn/chsi/css/common2014.css?v=1483494816229'>
+    <link rel="stylesheet" href='https://t1.chei.com.cn/common/ch/iconfont.css?v=1483494816229'>
+    <link rel="stylesheet" href='https://t1.chei.com.cn/chsi/xlcx/lscx/css/min/lscx.min.css?v=1483494816231' />
+    <link rel="stylesheet" href='https://t1.chei.com.cn/common/plugins/dialog/6.0.5/css/ui-dialog.css?v=1483494816229'>
+    <script src='https://t1.chei.com.cn/common/jquery/1.9.1/jquery.min.js?v=1483494816229'></script>
+    <script src='https://t1.chei.com.cn/common/plugins/dialog/6.0.5/dialog-min.js?v=1483494816229'></script>
+    <script src='https://t1.chei.com.cn/common/plugins/validation/jquery.validate.min.js?v=1483494816229'></script>
+
+
+    <script src="https://t1.chei.com.cn/common/js/boomerang-min-20141211.js"></script>
+
+    <!-- BOOMR.init({
+            beacon_url: "https://www.chsi.com.cn/images/perf.gif",
+            log: null,
+            DNS: {
+                base_url: "https://*.chdi.com.cn/images/"
+            }
+        }); -->
+</head>
+
+<body>
+    <div class="header">
+        <div class="t_top_nav">
+            <div class="width1000 clearfix">
+                <div class="t_top_nav_l">
+                    <span style="color:#d94840">&nbsp;</span>
+                </div>
+                <div class="t_top_nav_r">
+                    <a href='/total' target="_parent">返回查询</a>
+                </div>
+                <div class="clearit"></div>
+            </div>
+        </div>
+        <div class="t_header">
+            <div class="width1000 clearfix">
+            </div>
+        </div>
+        <style type="text/css">
+            .t_nav li {
+                padding-right: 7px;
+            }
+        </style>
+    </div>
+    <div class="content">
+        <div class="main clearfix">
+
+            <div class="m_l" id="leftH">
+                <h2>中国高等教育学历证书查询结果</h2>
+                <div id="result">
+                    <div class="m_cnt_m clearfix">
+                        <div class="xlcx-list">
+                            <table id="xl-table" class="table table-bordered table-striped">
+                                <tbody id="list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="xlcx-prompt">
+                    <strong>证书样例显示：</strong>
+                    <div class="col-md-8">
+                        <img src="#" id="img" style="display: none" width="100%" height="auto" alt="证书样本"></img>
+                        <label for="info" id="info" style="display: none">暂无样本</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 显示图片 -->
+
+    </div>
+    </section>
+    <div class='xlcx-center'>
+
+    </div>
+    </div>
+    <script>
+        var mess = "<%= messages %>";
+        var reg = new RegExp("&#34;", "g"); //创建正则RegExp对象     
+        mess = mess.replace(reg, '"');
+        console.log(mess);
+        let data = {};
+        $('#img').hide();
+        $('#info').hide();
+        $('#img').attr("src", "#");
+        var html1 = '';
+        var cmd = '';
+        if (mess) {
+            data = eval('(' + mess + ')');
+            if (data.num.length == 18) {
+                html1 += '<tr> <th> 姓名 ：</th>' +
+                    '<td>' + data.name + '</td>' +
+                    '<th> 性别 :</th>' +
+                    '<td>' + data.sex + '</td></tr>' +
+                    '<tr><th> 出生日期： </th>' +
+                    '<td>' + data.birthday + '</td>' +
+                    '<th> 入学日期： </th>' +
+                    '<td>' + data.begin + '</td></tr>' +
+                    '<tr><th > 毕业日期： </th>' +
+                    '<td>' + data.end + '</td>' +
+                    '<th> 学校名称： </th>' +
+                    '<td>' + data.school + '</td></tr>' +
+                    '<tr><th > 专业： </th>' +
+                    '<td>' + data.major + '</td>' +
+                    '<th> 学历类别： </th>' +
+                    '<td>' + data.txtype + '</td></tr>' +
+                    '<tr><th> 学制： </th>' +
+                    '<td>' + data.schoolsystem + '</td>' +
+                    '<th> 学习形式： </th>' +
+                    '<td>' + data.form + '</td></tr>' +
+                    '<tr><th > 层次： </th>' +
+                    '<td>' + data.level + '</td>' +
+                    '<th> 证书编号： </th>' +
+                    '<td>' + data.num + '</td></tr>'
+                var certdate = data.certdate;
+                var txtype = data.txtype;
+                let selector1 = {
+                    selector: {
+                        $and: [{
+                                date: {
+                                    $lte: certdate
+                                }
+                            },
+                            {
+                                txtype: {
+                                    $eq: txtype
+                                }
+                            }
+                        ]
+                    }
+                }
+                cmd += 'query("selectBy",\'' + JSON.stringify(selector1) + '\')';
+                console.log(cmd);
+                $.ajax({
+                    url: '/api',
+                    type: 'get',
+                    data: {
+                        cmd: cmd
+                    },
+                    success: function (data) {
+                        data = eval('(' + data + ')');
+                        console.log(data);
+                        let jsonobj = JSON.parse(data);
+                        //{k1:{v1},k2:{v2},...}转换为[{_id:k1,v1},{_id:k2,v2},...]
+                        let newobjs = [];
+                        for (let x in jsonobj) {
+                            jsonobj[x]._id = x;
+                            newobjs.push(jsonobj[x]);
+                        }
+                        if (newobjs.length != 0) {
+                            //最后近日期
+                            var last_pic = newobjs[0];
+                            for (let i in newobjs) {
+                                var cur_pic = newobjs[i];
+                                cur_pic.date > last_pic.date ? last_pic = cur_pic : null;
+                            }
+                            $('#img').show();
+                            $('#img').attr("src", last_pic.base64);
+                        } else {
+                            $('#info').show();
+                        }
+
+
+
+                    },
+                    error: function (e) {
+                        alert('server error!');
+                    }
+                });
+            } else {
+                html1 += '<tr> <th class="td-width-1"> 姓名 ：</th>' +
+                    '<td class="td-width-2" id="name">' + data.name + '</td>' +
+                    '<th class="td-width-3"> 性别 :</th>' +
+                    '<td>' + data.sex + '</td></tr>' +
+                    '<tr><th> 出生日期： </th>' +
+                    '<td>' + data.birthday + '</td>' +
+                    '<th> 学校名称： </th>' +
+                    '<td>' + data.school + '</td></tr>' +
+                    '<tr><th > 专业： </th>' +
+                    '<td>' + data.major + '</td>' +
+                    '<th> 学历类别： </th>' +
+                    '<td>' + data.txtype + '</td></tr>' +
+                    '<tr><th > 学科： </th>' +
+                    '<td>' + data.degree + '</td>' +
+                    '<th> 证书编号： </th>' +
+                    '<td>' + data.num + '</td></tr>'
+                var certdate = data.certdate;
+                var txtype = data.txtype;
+                let selector1 = {
+                    selector: {
+                        $and: [{
+                                date: {
+                                    $lte: certdate
+                                }
+                            },
+                            {
+                                txtype: {
+                                    $eq: txtype
+                                }
+                            }
+                        ]
+                    }
+                }
+                cmd += 'query("selectBy",\'' + JSON.stringify(selector1) + '\')';
+                console.log(cmd);
+                $.ajax({
+                    url: '/api',
+                    type: 'get',
+                    data: {
+                        cmd: cmd
+                    },
+                    success: function (data) {
+                        data = eval('(' + data + ')');
+                        console.log(data);
+                        let jsonobj = JSON.parse(data);
+                        //{k1:{v1},k2:{v2},...}转换为[{_id:k1,v1},{_id:k2,v2},...]
+                        let newobjs = [];
+                        for (let x in jsonobj) {
+                            jsonobj[x]._id = x;
+                            newobjs.push(jsonobj[x]);
+                        }
+                        if (newobjs.length != 0) {
+                            //最后近日期
+                            var last_pic = newobjs[0];
+                            for (let i in newobjs) {
+                                var cur_pic = newobjs[i];
+                                cur_pic.date > last_pic.date ? last_pic = cur_pic : null;
+                            }
+                            $('#img').show();
+                            $('#img').attr("src", last_pic.base64);
+                        } else {
+                            $('#info').show();
+                        }
+
+
+
+                    },
+                    error: function (e) {
+                        alert('server error!');
+                    }
+                });
+            }
+        } else if (mess === "") {
+            html1 = '<tr> <td > 恭喜你找到一张假证！ </td></tr>'
+        }
+        $('#list').append(html1);
+
+
+
+        var certdate = $('#certdate').val();
+        var txtype = "";
+
+
+
+        //此处可以先判断输入日期是否有误
+    </script>
+
+
+</body>
+
+</html>

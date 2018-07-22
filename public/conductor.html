@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<!--
+        This is a starter template page. Use this page to start your new project from
+        scratch. This page gets rid of all links and provides the needed markup only.
+        -->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <title>
+        <%= title %>
+    </title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="bower_components/morris.js/morris.css">
+
+    <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+                  page. However, you can choose any other skin. Make sure you
+                  apply the skin class to the body tag so the changes take effect. -->
+    <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+
+    <style>
+        .content1,
+        .content2,
+        .content3,
+        .content4,
+        .content5 {
+            width: 30%;
+            height: 100px;
+            float: left;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+    </style>
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+        <!-- Main Header -->
+        <header class="main-header">
+
+            <!-- Logo -->
+            <a href="/total" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">
+                    <b>F</b>NC</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    <b>学位证书认证系统</b>
+                </span>
+            </a>
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- User Account Menu -->
+                        <li class="dropdown user user-menu">
+                            <!-- Menu Toggle Button -->
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <!-- The user image in the navbar-->
+                                <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                <span class="hidden-xs">
+                                    <%=username%>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- The user image in the menu -->
+                                <li class="user-header">
+                                    <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    <p>
+                                        <%=username%>
+                                            <!--<small>Member since Nov. 2012</small>-->
+                                    </p>
+                                </li>
+                                <!-- Menu Body -->
+                                <li class="user-body">
+                                    <!-- /.row -->
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-right-container">
+                                        <a href="/logout" class="btn btn-default btn-flat" style="float: right;">退出</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Control Sidebar Toggle Button -->
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- Sidebar user panel -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                    </div>
+                    <div class="pull-left info">
+                        <p>
+                            <%=username%>
+                        </p>
+                        <a href="#">
+                            <i class="fa fa-circle text-success"></i> 用户</a>
+                    </div>
+                </div>
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li class="header">目 录</li>
+                    <!-- Optionally, you can add icons to the links -->
+                    <li class="active">
+                        <a href="/conductor">
+                            <i class="fa fa-link"></i>
+                            <span>主界面</span>
+                        </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-link"></i>
+                            <span>单项操作</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="/oneinput">单项录入</a>
+                            </li>
+                            <li>
+                                <a href="/onemodify">单项修改</a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                    <li>
+                        <a href="/excel">
+                            <i class="fa fa-link"></i>
+                            <span>批量录入</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/count">
+                            <i class="fa fa-link"></i>
+                            <span>模糊查询</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/revoke">
+                            <i class="fa fa-link"></i>
+                            <span>撤销</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/sample">
+                            <i class="fa fa-link"></i>
+                            <span>样本</span>
+                        </a>
+                    </li>
+                </ul>
+
+
+            </section>
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    主页
+                    <small>选择功能</small>
+                </h1>
+            </section>
+
+
+
+            <div style="width:300px;height:100px;margin:100px 0 0 40px" class="content1">
+                <table cellpadding="2" cellspacing="2" border="1">
+                    <tr>
+                        <td class="form-group">
+                            <div class="zsbh_tips"></div>
+
+                            <a href="/oneinput" target="_blank">单项录入</a>
+                        </td>
+                    </tr>
+                    <div class="lscs_r" style="width: 288px;">
+                        <strong>功能描述：</strong>
+                        <!-- <br> 1、点此查看
+                            <a href="http://www.chsi.com.cn/help/cxfw.jsp" target="_blank" class="colorBlue">学历证书查询范围</a>。 -->
+                        <br> 将学历学位证书加入后台区块链系统中，一次只能加入一个。
+                        <!--  <span class="colorBlue example_zs">学历证书样例</span>&nbsp;&nbsp;<span class="colorBlue example_zms">学历证明书样例</span> -->
+                    </div>
+                </table>
+            </div>
+            <div style="width:300px;height:100px;margin:100px 0 0 40px" class="content2">
+                <table cellpadding="2" cellspacing="2" border="1">
+                    <tr>
+                        <td class="form-group">
+                            <div class="zsbh_tips"></div>
+
+                            <a href="/excel" target="_blank">批量加入</a>
+                        </td>
+                    </tr>
+
+                    <div class="lscs_r" style="width: 288px;">
+                        <strong>功能描述：</strong>
+                        <!-- <br> 1、点此查看
+                        <a href="http://www.chsi.com.cn/help/cxfw.jsp" target="_blank" class="colorBlue">学历证书查询范围</a>。 -->
+                        <br> 批量加入实现分批次将学历学位证书加入后台区块链系统中。
+                        <!--  <span class="colorBlue example_zs">学历证书样例</span>&nbsp;&nbsp;<span class="colorBlue example_zms">学历证明书样例</span> -->
+                    </div>
+
+                </table>
+            </div>
+            <div style="width:300px;height:100px;margin:100px 0 0 40px" class="content3">
+
+                <table cellpadding="2" cellspacing="2" border="1">
+                    <tr>
+                        <td class="form-group">
+                            <div class="zsbh_tips"></div>
+
+                            <a href="/count" target="_blank">模糊查询</a>
+                        </td>
+                    </tr>
+
+                    <div class="lscs_r" style="width: 288px;">
+                        <strong>功能描述：</strong>
+                        <!-- <br> 1、点此查看
+                        <a href="http://www.chsi.com.cn/help/cxfw.jsp" target="_blank" class="colorBlue">学历证书查询范围</a>。 -->
+                        <br> 只需要输入部分信息，便可以根据信息匹配查询到对应的证书。
+                        <!--  <span class="colorBlue example_zs">学历证书样例</span>&nbsp;&nbsp;<span class="colorBlue example_zms">学历证明书样例</span> -->
+                    </div>
+
+                </table>
+            </div>
+
+            <div style="width:300px;height:100px;margin:100px 0 0 40px" class="content4">
+                <table cellpadding="2" cellspacing="2" border="1">
+                    <tr>
+                        <td class="form-group">
+                            <div class="zsbh_tips"></div>
+
+                            <a href="/revoke" target="_blank">撤销</a>
+                        </td>
+                    </tr>
+
+                    <div class="lscs_r" style="width: 288px;">
+                        <strong>功能描述：</strong>
+                        <!-- <br> 1、点此查看
+                        <a href="http://www.chsi.com.cn/help/cxfw.jsp" target="_blank" class="colorBlue">学历证书查询范围</a>。 -->
+                        <br> 将已经加入区块链的证书信息撤销。
+                        <!--  <span class="colorBlue example_zs">学历证书样例</span>&nbsp;&nbsp;<span class="colorBlue example_zms">学历证明书样例</span> -->
+                    </div>
+
+                </table>
+            </div>
+
+
+            <div style="width:300px;height:100px;margin:100px 0 0 40px" class="content5">
+                <table cellpadding="2" cellspacing="2" border="1">
+                    <tr>
+                        <td class="form-group">
+                            <div class="zsbh_tips"></div>
+
+                            <a href="sample" target="_blank">范本查询</a>
+                        </td>
+                    </tr>
+
+                    <div class="lscs_r" style="width: 288px;">
+                        <strong>功能描述：</strong>
+                        <!-- <br> 1、点此查看
+                        <a href="http://www.chsi.com.cn/help/cxfw.jsp" target="_blank" class="colorBlue">学历证书查询范围</a>。 -->
+                        <br> 查看对应证书的范本。
+                        <!--  <span class="colorBlue example_zs">学历证书样例</span>&nbsp;&nbsp;<span class="colorBlue example_zms">学历证明书样例</span> -->
+                    </div>
+
+                </table>
+            </div>
+
+
+
+            <!-- /.content-wrapper -->
+            <footer class="main-footer">
+            </footer>
+        </div>
+        <!-- ./wrapper -->
+        <!-- jQuery 3 -->
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <!-- Bootstrap 3.3.7 -->
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- DataTables -->
+        <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+        <!-- SlimScroll -->
+        <script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+        <!-- FastClick -->
+        <script src="bower_components/fastclick/lib/fastclick.js"></script>
+        <!-- AdminLTE App -->
+        <script src="dist/js/adminlte.min.js"></script>
+        <!-- AdminLTE for demo purposes -->
+        <script src="bower_components/raphael/raphael.min.js"></script>
+        <script src="bower_components/morris.js/morris.min.js"></script>
+        <script src="dist/js/demo.js"></script>
+
+</body>
+
+</html>
