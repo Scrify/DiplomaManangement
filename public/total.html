@@ -1,192 +1,205 @@
-<!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
+<!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
-    <title><%= title %></title>
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" >
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-    <link rel="stylesheet" href="bower_components/morris.js/morris.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>证书查询--学位信息管理系统</title>
+    <link rel="icon" href="/favicon.ico?v=1483494816229" type="image/x-icon" />
+    <link rel="stylesheet" href='https://t4.chei.com.cn/chsi/css/common2014.css?v=1483494816229'>
+    <link rel="stylesheet" href='https://t1.chei.com.cn/common/ch/iconfont.css?v=1483494816229'>
+    <link rel="stylesheet" href='https://t1.chei.com.cn/chsi/xlcx/lscx/css/min/lscx.min.css?v=1483494816231' />
+    <link rel="stylesheet" href='https://t1.chei.com.cn/common/plugins/dialog/6.0.5/css/ui-dialog.css?v=1483494816229'>
+    <script src='https://t1.chei.com.cn/common/jquery/1.9.1/jquery.min.js?v=1483494816229'></script>
+    <script src='https://t1.chei.com.cn/common/plugins/dialog/6.0.5/dialog-min.js?v=1483494816229'></script>
+    <script src='https://t1.chei.com.cn/common/plugins/validation/jquery.validate.min.js?v=1483494816229'></script>
 
-    <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
-          page. However, you can choose any other skin. Make sure you
-          apply the skin class to the body tag so the changes take effect. -->
-    <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <script src="https://t1.chei.com.cn/common/js/boomerang-min-20141211.js"></script>
+    <!-- <script>
+        BOOMR.init({
+            beacon_url: "https://www.chsi.com.cn/images/perf.gif",
+            log: null,
+            DNS: {
+                base_url: "https://*.chdi.com.cn/images/"
+            }
+        });
+    </script> -->
+    <script>
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-100524-1']);
+        _gaq.push(['_trackPageview']);
 
-    <!-- Google Font -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') +
+                '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
 
-    <!-- Main Header -->
-    <header class="main-header">
-
-        <!-- Logo -->
-        <a href="/total" class="logo">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>F</b>NC</span>
-            <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>虚拟货币小游戏</b></span>
-        </a>
-
-        <!-- Header Navbar -->
-        <nav class="navbar navbar-static-top" role="navigation">
-            <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                <span class="sr-only">Toggle navigation</span>
-            </a>
-            <!-- Navbar Right Menu -->
-            <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-                    <!-- User Account Menu -->
-                    <li class="dropdown user user-menu">
-                        <!-- Menu Toggle Button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <!-- The user image in the navbar-->
-                            <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                            <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                            <span class="hidden-xs"><%=username%></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <!-- The user image in the menu -->
-                            <li class="user-header">
-                                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                                <p>
-                                    <%=username%>
-                                    <!--<small>Member since Nov. 2012</small>-->
-                                </p>
-                            </li>
-                            <!-- Menu Body -->
-                            <li class="user-body">
-                                <!-- /.row -->
-                            </li>
-                            <!-- Menu Footer-->
-                            <li class="user-footer">
-                                <div class="pull-right-container">
-                                    <!-- <a herf="/changePwd" class="btn btn-default btn-flat" style="float: left;">修改密码</a> -->
-                                    <a href=/changePwd class="btn btn-default btn-flat" style="float: left;">修改密码</a>
-                                    <!-- <button type="button" class="btn btn-default btn-flat" id="change" name="change" style="float: left;">修改密码</button> -->
-                                </div>
-                                <div class="pull-right-container">
-                                    <a href="/logout" class="btn btn-default btn-flat" style="float: right;">退出</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- Control Sidebar Toggle Button -->
-                </ul>
-            </div>
-        </nav>
-    </header>
-    <!-- Left side column. contains the logo and sidebar -->
-    <aside class="main-sidebar">
-
-        <!-- sidebar: style can be found in sidebar.less -->
-        <section class="sidebar">
-
-            <!-- Sidebar user panel (optional) -->
-            <div class="user-panel">
-                <div class="pull-left image">
-                    <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+<body>
+    <div class="header">
+        <div class="t_top_nav">
+            <div class="width1000 clearfix">
+                <div class="t_top_nav_l">
+                    <span style="color:#d94840">&nbsp;</span>
                 </div>
-                <div class="pull-left info">
-                    <p><%=username%></p>
-                    <!-- Status -->
-                    <a href="#"><i class="fa fa-circle text-success"></i> 用户</a>
+                <div class="t_top_nav_r">
+                    <a href='/login'>登录</a>
                 </div>
+                <div class="clearit"></div>
             </div>
-
-            <!-- Sidebar Menu -->
-            <ul class="sidebar-menu" data-widget="tree">
-                <li class="header">目 录</li>
-                <!-- Optionally, you can add icons to the links -->
-                <li class="active"><a href="/total"><i class="fa fa-link"></i> <span>主界面</span></a></li>
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-link"></i> <span>我的交易</span>
-                        <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="/excel">批量录入</a></li>
-                        <li><a href="/Revoke">撤销证书</a></li>
-                        <li><a href="/sample">加入样本</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <!-- /.sidebar-menu -->
-        </section>
-        <!-- /.sidebar -->
-    </aside>
-
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <h1>
-                货币列表
-                <small>用户自身货币及他人持有货币</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard active"></i> 主页</a></li>
-            </ol>
-        </section>
-
-        <!-- Main content -->
-        <section class="content">
-
-        </section>
-    </div>
-    <!-- /.content-wrapper -->
-
-    <!-- Main Footer -->
-    <footer class="main-footer">
-        <!-- To the right -->
-        <div class="pull-right hidden-xs">
-            Anything you want
         </div>
-        <!-- Default to the left -->
-        <strong>Copyright &copy; 2018 <a href="#">TheRang</a>.</strong> All rights reserved.
-    </footer>
-</div>
-<!-- ./wrapper -->
+        <div class="t_header">
+            <div class="width1000 clearfix">
+                <!-- <div class="t_h_logo">
+                    <a href="/" target="_parent" class="home"></a>&nbsp;</div> -->
+                <!-- <div class="t_h_search">
+                    <form method="get" action="/search.jsp" target="_blank" id='cse-search-box'>
+                        <table cellpadding="0" cellspacing="0" border="0" align="right">
+                            <tr>
+                                <td>
+                                    <input type="text" name="q" maxlength="50" id="sbi" class="t_h_s_input color999" value="站内搜索" />
+                                    <input type="hidden" name="sitesearch" value="chsi" />
+                                    <input type="hidden" name="searchType" value="baidu" />
+                                </td>
+                                <td>
+                                    <input type="submit" id="sbb" value="搜索" class="t_h_s_submit" />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div> -->
+            </div>
+        </div>
+        <style type="text/css">
+            .t_nav li {
+                padding-right: 7px;
+            }
+        </style>
+    </div>
+    <div class="content">
+        <div class="main_lscx clearfix">
+            <div class="m_l" id="leftH">
+                <h2>中国高等教育学历学位证书查询</h2>
+                <div class="m_cnt_m_lscx marginT20 clearfix">
+                    <div class='form_box clearfix'>
+                        <div class='lscs_l'>
+                            <form name="queryForm" id="queryForm" action="/getCert" method="POST">
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td class='alignR' style="width: 100px;">证书类别：</td>
+                                        <td class="form-group">
+                                            <div class="zsbh_tips"></div>
+                                            <select id="zslb" name="zslb" onchange="a()" autocomplete="off" required='true' maxlength="18" class='lscx_input' placeholder="证书类别">
+                                                <option value="BYZ">学历证书</option>
+                                                <option value="XWZ">学位证书</option>
+                                            </select>
+                                        </td>
+                                        <div>
+                                        </div>
+                                    </tr>
 
-<!-- REQUIRED JS SCRIPTS -->
+                                    <tr>
+                                        <td class='alignR' style="width: 100px;">证书编号：</td>
+                                        <td class="form-group">
+                                            <div class="zsbh_tips"></div>
+                                            <input type="text" class="lscx_input" minlength="18" maxlength="18" id="zsbh" name="zsbh" value="" autocomplete="off" required='true'
+                                                placeholder="证书编号" />
+                                            <script type="text/javascript">
+                                                //首先获得下拉框的节点对象；
 
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="bower_components/raphael/raphael.min.js"></script>
-<script src="bower_components/morris.js/morris.min.js"></script>
-<script src="dist/js/demo.js"></script>
-<script>
-</script>
+                                                //1.如何获得当前选中的值？：
+
+                                                //2.如何获得该下拉框所有的option的节点对象
+                                                //var options = select.options;
+                                                //注意：得到的options是一个对象数组
+
+                                                //3.如何获得第几个option的value值?比如我要获取第一option的value,可以这样：
+                                                //var value1 = options[0].value;
+                                                //4.如何获得第几个option的文本内容?比如我要获取第一option的文本,可以这样：
+                                                // var text1 = options[0].text;
+
+                                                //5.如何获得当前选中的option的索引？
+                                                // var index = select.selectedIndex;
+
+                                                //6.如何获得当前选中的option的文本内容？
+                                                //从第2个问题，我们已经获得所有的option的对象数组options了
+                                                //又从第5个问题，我们获取到了当前选中的option的索引值
+                                                //所以我们只要同options[index]下标的方法得到当前选中的option了
+                                                // var selectedText = options[index].text;
+                                                //var inputTest = document.getElementById("zsbh");
+                                                function a() {
+                                                    var select = document.getElementById("zslb");
+
+                                                    var value = select.value;
+                                                    if (value == "BYZ") {
+                                                        document.getElementById("zsbh").setAttribute("minlength", "18");
+                                                        document.getElementById("zsbh").setAttribute("maxlength", "18");
+
+                                                    } else {
+                                                        document.getElementById("zsbh").setAttribute("maxlength", "16");
+                                                        document.getElementById("zsbh").setAttribute("minlength", "16");
+                                                    };
+                                                }
+                                            </script>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td colspan="4" class='td-btn'>
+                                            <input name="rdmid" id="rdmid" type="hidden" value="m8e1o83px9l8eqxpb7xd8zgxna8bot5q">
+                                            <input name="state" id="state" type="hidden" value="CHSI">
+                                            <button type="submit" id="xueliSubmit" class="btn btn-block btn-primary">查询</button>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                        <div class="lscs_r" style="width: 288px;">
+                            <strong>注意：</strong>
+                            <!-- <br> 1、点此查看
+                            <a href="http://www.chsi.com.cn/help/cxfw.jsp" target="_blank" class="colorBlue">学历证书查询范围</a>。 -->
+                            <br> 1、查询学历证书需经权属人同意。
+                            <br> 2、学历证书查询结果不得用于违背权属人意愿之用途。
+                            <br> 3、学历证书和学位证书由各高校自行印制，学历证书编号通常为18位，学位证书编号通常为16位。不知道证书编号的，可咨询发证学校。
+                            <!--  <span class="colorBlue example_zs">学历证书样例</span>&nbsp;&nbsp;<span class="colorBlue example_zms">学历证明书样例</span> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <script>
+        $('#xueliSubmit').click(function () {
+            let zslb = $("#zslb").val();
+            let zsbh = $('#zsbh').val();
+            $.ajax({
+                url: '/getCert',
+                type: 'post',
+                data: {
+                    zslb: zslb,
+                    zsbh: zsbh
+                },
+                success: function (e) {
+                },                
+                error: function (e) {
+                    console.log(e);
+                    alert("server error!");
+                }
+            });
+        });
+    </script> -->
+
 </body>
+
+
 </html>

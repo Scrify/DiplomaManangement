@@ -100,11 +100,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </header>
         <!-- Left side column. contains the logo and sidebar -->
         <aside class="main-sidebar">
-
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
-
-                <!-- Sidebar user panel (optional) -->
+                <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
                         <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
@@ -113,28 +111,70 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <p>
                             <%=username%>
                         </p>
-                        <!-- Status -->
                         <a href="#">
                             <i class="fa fa-circle text-success"></i> 用户</a>
                     </div>
                 </div>
-
-                <!-- Sidebar Menu -->
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">目 录</li>
                     <!-- Optionally, you can add icons to the links -->
-                    <li class="active">
-                        <a href="/total">
+                    <li>
+                        <a href="/conductor">
                             <i class="fa fa-link"></i>
                             <span>主界面</span>
                         </a>
                     </li>
-                </ul>
-                <!-- /.sidebar-menu -->
-            </section>
-            <!-- /.sidebar -->
-        </aside>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-link"></i>
+                            <span>单项操作</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="/oneinput">单项录入</a>
+                            </li>
+                            <li>
+                                <a href="/onemodify">单项修改</a>
+                            </li>
+                        </ul>
+                    </li>
 
+
+                    <li class="active">
+                        <a href="/excel">
+                            <i class="fa fa-link"></i>
+                            <span>批量录入</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/count">
+                            <i class="fa fa-link"></i>
+                            <span>模糊查询</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/revoke">
+                            <i class="fa fa-link"></i>
+                            <span>撤销</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/sample">
+                            <i class="fa fa-link"></i>
+                            <span>样本</span>
+                        </a>
+                    </li>
+                </ul>
+
+
+            </section>
+        </aside>
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -233,24 +273,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
             $('#upfile').val('');
             $('#upfile').click();
         });
-
-
         let diplima = [];
         var flag = true;
-
-
         $('#upfile').on("change", function (e) {
-
             // 清空数组
             diplima.splice(0, diplima.length);
             flag = true;
             var html = '';
             //获取证书类型
             var Txtype = $('#Txtype').val();
-
             //将文件显示在列表中
             $('#FileList').empty("");
-
             html = '<tr><td id="tds">' + e.currentTarget.files[0].name + '</td>' +
                 '<td id="tds">' + (e.currentTarget.files[0].size / 1000).toFixed(1) + 'KB</td>' +
                 '<td id="status"><span>检查文件内容</span></td></tr>'
@@ -309,7 +342,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         'degree': data[i].学位,
 
                     });
-
                     //检查证书类别
                     if ((diplima[i].txtpye !== "毕业证书" && Txtype == "BYZ") || (diplima[i].txtpye !=="学士学位证书" && Txtype == "XWZ")) {
                         flag = false;
@@ -317,7 +349,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         $('#upload').attr("disabled", true);
                         return;
                     }
-
                     //检查学制、学校、姓名、专业、学位
                     if (!diplima[i].schoolsystem && Txtype == "BYZ") { //学制
                         flag = false;
@@ -418,7 +449,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         return;
                     }
                 };
-
                 if (flag) {
                     $('#status').html('<span>等待上传</span>');
                     $('#upload').attr("disabled", false);  

@@ -26,10 +26,16 @@ module.exports = function (app) {
     app.route('/api')
         .post(api.api);
 
+    app.route('/getCert')
+        .post(api.getCert);
+
+    app.route('/getModify')
+        .get(api.getModify);
+
     app.route('/getMyTxHistory')
         .get(api.getMyTxHistory);
 
-        
+
     app.route('/getAllTx')
         .get(api.getAllTx);
 

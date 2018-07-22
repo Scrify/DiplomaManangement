@@ -30,43 +30,40 @@ exports.renderRegister = function (req, res) {
     // next()
 };
 
-
 //个人主页
 exports.renderTotal = function (req, res, next) {
-    // console.log('1');
+    res.render('total', {
+        title: 'Total',
+        username: req.session.username
+    });
+};
+exports.renderCount = function (req, res, next) {
     if (!req.session.username) {
         res.render('login', {
             title: 'Login',
             messages: '请先登录'
         });
     } else {
-        // console.log('total');
-        res.render('total', {
-            title: 'Total',
+        res.render('count', {
+            title: 'Count',
             username: req.session.username
         });
     }
 };
-
-
-//撤销证书
-exports.renderRevoke = function (req, res, next) {
-    console.log('1');
+exports.renderConductor = function (req, res, next) {
     if (!req.session.username) {
         res.render('login', {
             title: 'Login',
             messages: '请先登录'
         });
     } else {
-        // console.log('total');
-        res.render('revoke', {
-            title: 'Revoke',
+        res.render('conductor', {
+            title: 'Conductor',
             username: req.session.username
         });
     }
 };
 
-//批量录入
 exports.renderExcel = function (req, res, next) {
     // console.log('1');
     if (!req.session.username) {
@@ -95,6 +92,59 @@ exports.renderSample = function (req, res, next) {
         // console.log('total');
         res.render('sample', {
             title: 'Sample',
+            username: req.session.username
+        });
+    }
+};
+
+exports.renderInformation = function (req, res, next) {
+    res.render('information', {
+        title: 'Information',
+        username: req.session.username
+    });
+};
+
+//撤销证书
+exports.renderRevoke = function (req, res, next) {
+    console.log('1');
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        // console.log('total');
+        res.render('revoke', {
+            title: 'Revoke',
+            username: req.session.username
+        });
+    }
+};
+
+
+exports.renderOnemodify = function (req, res, next) {
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        res.render('onemodify', {
+            title: 'Onemodify',
+            username: req.session.username
+        });
+    }
+};
+
+exports.renderOneinput = function (req, res, next) {
+    if (!req.session.username) {
+        res.render('login', {
+            title: 'Login',
+            messages: '请先登录'
+        });
+    } else {
+        res.render('oneinput', {
+            title: 'Oneinput',
             username: req.session.username
         });
     }

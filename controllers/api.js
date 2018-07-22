@@ -23,7 +23,9 @@ exports.login = function (req, res, next) {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
             //查询mongodb并与输入的帐号密码进行匹配。
-            let docs = await col.find({ "_id": username }).toArray();
+            let docs = await col.find({
+                "_id": username
+            }).toArray();
             mgclient.close();
             let docsStr = docs.join();
             if (docsStr === "") {
@@ -40,7 +42,7 @@ exports.login = function (req, res, next) {
                     (async () => {
                         let fc = await FConn.FConnect(username);
                         fc_list[username] = fc;
-                        return res.redirect('total');
+                        return res.redirect('conductor');
                         // return res.redirect('excel');
 
                     })()
@@ -81,21 +83,21 @@ exports.confirm = function (req, res, next) {
         (async () => {
             mgclient = await MongoClient.connect(DBurl);
             let col = mgclient.db().collection('users');
-            let docs = await col.find({ "_id": username }).toArray();
+            let docs = await col.find({
+                "_id": username
+            }).toArray();
             let docsStr = docs.join();
             if (docsStr === "") {
                 // var e = true;
                 res.write('true');
-            }
-            else {
+            } else {
                 res.write('false');
             }
             res.end();
             mgclient.close();
 
         })()
-    } catch (err) {
-    }
+    } catch (err) {}
 };
 exports.register = function (req, res, next) {
     let username = req.body.username;
@@ -112,7 +114,12 @@ exports.register = function (req, res, next) {
             // console.log(cert);
             let salt = 'njustXP2018';
             password = crypto.pbkdf2Sync(password, salt, 10000, 64, 'md5').toString('base64');
-            let write = { _id: username, pwd: password, ca: cert.toString(), isValid: true };
+            let write = {
+                _id: username,
+                pwd: password,
+                ca: cert.toString(),
+                isValid: true
+            };
             let r = await col.insertOne(write);
             const assert = require('assert');
             assert.equal(1, r.insertedCount);
@@ -220,32 +227,25 @@ exports.api = function (req, res, next) {
     }
     (async () => {
         try {
-            // let ret = await eval(cmd);
             var fc = fc_list[username];
             var cmd1 = 'fc.' + req.query.cmd;
             var cmd2 = 'fc.' + req.body.cmd;
             var length = req.body.length;
-            var cmd ='';
-            if(cmd1 == 'fc.undefined'){//post方法
-
+            var cmd = '';
+            if (cmd1 == 'fc.undefined') { //post方法
                 cmd = cmd2;
                 // console.log(cmd);
-
-            }else{//get方法
+            } else { //get方法
                 cmd = cmd1;
                 // console.log(cmd);
             }
-            // console.log(cmd);
             if (cmd.startsWith('fc.invoke')) {
                 eval(cmd); //注意，invoke调用也可能有返回，但invoke(put,k,v)无返回
                 res.write('录入成功！');
             } else {
                 var ret = await eval(cmd);
                 if (ret !== undefined) {
-
                     res.write(JSON.stringify(ret));
-
-
                 }
             }
         } catch (err) {
@@ -292,8 +292,58 @@ exports.getAllTx = function (req, res, next) {
         }
         res.end();
     })();
-
 };
+
+exports.getCert = function (req, res, next) {
+    let zsbh = req.body.zsbh;
+    let zslb = req.body.zslb;
+    console.log('zsbh=', zsbh);
+    (async () => {
+        try {
+            let fc = fc_list['admin'];
+            if (fc == undefined) {
+                fc = await FConn.FConnect('admin');
+                fc_list['admin'] = fc;
+            }
+            var key = zslb + zsbh;
+            let re = await fc.query("get", key);
+            return res.render('information', {
+                title: 'Information',
+                messages: re
+            });
+        } catch (err) {
+            console.log("Fabric连接出错或执行出错", err);
+        }
+    })();
+};
+
+exports.getModify = function (req, res, next) {
+    var username = req.session.username;
+    console.log("username=" + username);
+    if (username === null) {
+        return res.render('login', {
+            title: 'Login',
+            messages: '请先登录!'
+        });
+    }
+    let zsbh = req.query.zsbh;
+    let zslb = req.query.zslb;
+    console.log('zsbh=', zsbh);
+    (async () => {
+        try {
+            let fc = fc_list[username];
+            var key = zslb + zsbh;
+            let re = await fc.query("get", key);
+            console.log(re);
+            res.write(re);
+        } catch (err) {
+            console.error(err);
+            res.write('错误:' + err); 
+        }
+        res.end();
+    })();
+};
+
 
 exports.remove = function (req, res, next) {
     var username = req.session.username;
@@ -309,24 +359,19 @@ exports.remove = function (req, res, next) {
             let fc = fc_list[username];
             let key = req.query.key;
             let reason = req.query.reason;
-            let curtx = await fc.query("get",key);
+            let curtx = await fc.query("get", key);
             // let msg = eval('(' + curtx + ')');
             // console.log(msg);
-
-            if(!curtx){
-                res.write('无此证书！');                
-            }else if(eval('(' + curtx + ')').status){
-                res.write('该证书已被撤销！');                
-            }else{
-
+            if (!curtx) {
+                res.write('无此证书！');
+            } else if (eval('(' + curtx + ')').status) {
+                res.write('该证书已被撤销！');
+            } else {
                 result = JSON.parse(curtx);
-
                 result.status = "撤销";
                 result.reason = reason;
                 console.log(result);
-
-                    
-                fc.invoke("put",key,JSON.stringify(result));
+                fc.invoke("put", key, JSON.stringify(result));
                 res.write('撤销成功！');
             }
         } catch (err) {
